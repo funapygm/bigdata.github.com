@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revision Notes - Semantic Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-link:hover {
+            background: #764ba2;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #667eea;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .note-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        code {
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight {
+            background: #ffd700;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .example {
+            background: #e6f7ff;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .example h4 {
+            color: #48bb78;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+
+        <h1>Revision Notes - Semantic Web & Knowledge Graphs</h1>
+
+        <div class="note-section">
+            <h2>🔑 Key Concepts</h2>
+
+            <h3>1. The Semantic Web</h3>
+            <ul>
+                <li><strong>Web of Documents</strong> → <strong>Web of Data</strong></li>
+                <li>Goal: Make data machine-readable with embedded semantics</li>
+                <li>Uses W3C standards: RDF, RDFS, OWL, SPARQL</li>
+            </ul>
+
+            <h3>2. Knowledge Graphs</h3>
+            <ul>
+                <li>Graph-based knowledge representation</li>
+                <li><strong>Nodes</strong>: Entities (resources)</li>
+                <li><strong>Edges</strong>: Relationships (properties)</li>
+                <li>Examples: Google Knowledge Graph, Wikidata, DBpedia</li>
+            </ul>
+        </div>
+
+        <div class="note-section">
+            <h2>📊 RDF (Resource Description Framework)</h2>
+
+            <h3>RDF Triples</h3>
+            <p>Basic unit: <code>(Subject, Predicate, Object)</code></p>
+            <ul>
+                <li><strong>Subject</strong>: Resource (IRI)</li>
+                <li><strong>Predicate</strong>: Property/Relationship (IRI)</li>
+                <li><strong>Object</strong>: Resource (IRI) or Literal (value)</li>
+            </ul>
+
+            <div class="example">
+                <h4>Example:</h4>
+                <code>ex:Bob foaf:knows ex:Alice .</code><br>
+                <code>ex:Bob schema:birthDate "1990-07-04"^^xsd:date .</code>
+            </div>
+
+            <h3>Serialization Formats</h3>
+            <ul>
+                <li><strong>RDF/XML</strong>: Original standard, verbose</li>
+                <li><strong>Turtle</strong>: Human-readable, uses prefixes</li>
+                <li><strong>N-Triples</strong>: Line-based, good for processing</li>
+                <li><strong>JSON-LD</strong>: JSON extension for RDF</li>
+                <li><strong>RDFa</strong>: Embedded in HTML</li>
+            </ul>
+        </div>
+
+        <div class="note-section">
+            <h2>🏗️ RDFS (RDF Schema)</h2>
+
+            <h3>Purpose</h3>
+            <p>Defines vocabularies - classes and properties for RDF data</p>
+
+            <h3>Key Classes</h3>
+            <ul>
+                <li><code>rdfs:Class</code>: Defines all classes</li>
+                <li><code>rdfs:Resource</code>: Defines all resources</li>
+                <li><code>rdfs:Literal</code>: Defines literal values</li>
+                <li><code>rdfs:Property</code>: Defines all properties</li>
+            </ul>
+
+            <h3>Key Properties</h3>
+            <ul>
+                <li><code>rdfs:subClassOf</code>: Class hierarchy</li>
+                <li><code>rdfs:subPropertyOf</code>: Property hierarchy</li>
+                <li><code>rdfs:domain</code>: Subject class constraint</li>
+                <li><code>rdfs:range</code>: Object class/datatype constraint</li>
+            </ul>
+
+            <h3>Inference</h3>
+            <ul>
+                <li><strong>Type Inheritance</strong>: If A subClassOf B, then instances of A are also B</li>
+                <li><strong>Type Inference</strong>: Infer class from domain/range constraints</li>
+            </ul>
+        </div>
+
+        <div class="note-section">
+            <h2>🎯 SKOS (Simple Knowledge Organization System)</h2>
+
+            <h3>Purpose</h3>
+            <p>Create structured vocabularies, taxonomies, and thesauri</p>
+
+            <h3>Core Elements</h3>
+            <ul>
+                <li><code>skos:Concept</code>: Basic unit of thought</li>
+                <li><code>skos:prefLabel</code>: Preferred label</li>
+                <li><code>skos:altLabel</code>: Alternative label (synonym)</li>
+            </ul>
+
+            <h3>Relationships</h3>
+            <ul>
+                <li><code>skos:broader</code> / <code>skos:narrower</code>: Hierarchical</li>
+                <li><code>skos:broaderTransitive</code>: Explicit transitivity</li>
+                <li><code>skos:related</code>: Associative (non-hierarchical)</li>
+            </ul>
+
+            <div class="example">
+                <h4>Important!</h4>
+                <p><code>skos:related</code> is disjoint with <code>skos:broader/narrower</code></p>
+            </div>
+        </div>
+
+        <div class="note-section">
+            <h2>🦉 OWL (Web Ontology Language)</h2>
+
+            <h3>Purpose</h3>
+            <p>Define complex ontologies with rich semantics and reasoning</p>
+
+            <h3>Terminology</h3>
+            <ul>
+                <li><strong>TBox</strong>: Terminology (ontology) - classes and properties</li>
+                <li><strong>ABox</strong>: Assertions (data) - individuals/instances</li>
+            </ul>
+
+            <h3>Components</h3>
+            <ul>
+                <li><strong>Classes</strong>: Concepts/types</li>
+                <li><strong>Object Properties</strong>: Relationships between individuals</li>
+                <li><strong>Data Properties</strong>: Attributes with literal values</li>
+                <li><strong>Individuals</strong>: Instances of classes</li>
+            </ul>
+
+            <h3>Class Characteristics</h3>
+            <ul>
+                <li><code>owl:equivalentClass</code>: Two classes with same instances</li>
+                <li><code>owl:disjointWith</code>: No shared instances</li>
+            </ul>
+
+            <h3>Property Characteristics</h3>
+            <ul>
+                <li><strong>Transitive</strong>: If A→B and B→C, then A→C</li>
+                <li><strong>Symmetric</strong>: If A→B, then B→A</li>
+                <li><strong>Asymmetric</strong>: If A→B, then NOT B→A</li>
+                <li><strong>Inverse</strong>: <code>hasWife</code> inverse of <code>hasHusband</code></li>
+            </ul>
+
+            <h3>Reasoning Tasks</h3>
+            <ol>
+                <li><strong>Consistency Checking</strong>: No contradictions</li>
+                <li><strong>Concept Satisfiability</strong>: Can class have instances?</li>
+                <li><strong>Classification</strong>: Build inheritance hierarchy</li>
+                <li><strong>Realisation</strong>: Compute direct types of individuals</li>
+            </ol>
+        </div>
+
+        <div class="note-section">
+            <h2>🔗 Linked Data Principles</h2>
+            <ol>
+                <li>Use <strong>IRIs</strong> to identify things</li>
+                <li>Use <strong>HTTP IRIs</strong> so they can be resolved</li>
+                <li>Provide <strong>useful information</strong> when IRI is looked up (RDF)</li>
+                <li><strong>Link to other data</strong> to enable discovery</li>
+            </ol>
+
+            <h3>5-Star Linked Open Data</h3>
+            <ul>
+                <li>⭐ Available online with open license</li>
+                <li>⭐⭐ Machine-readable structured data</li>
+                <li>⭐⭐⭐ Non-proprietary format (CSV)</li>
+                <li>⭐⭐⭐⭐ Use IRIs (RDF)</li>
+                <li>⭐⭐⭐⭐⭐ Link to other data (LOD)</li>
+            </ul>
+        </div>
+
+        <div class="note-section">
+            <h2>💭 Key Distinctions</h2>
+
+            <h3>Open World vs Closed World</h3>
+            <ul>
+                <li><strong>Open World</strong> (Semantic Web): Unknown = may be true or false</li>
+                <li><strong>Closed World</strong> (Relational DB): Unknown = false</li>
+            </ul>
+
+            <h3>Schema vs Instance</h3>
+            <ul>
+                <li><strong>Schema</strong>: Defines types and relationships (vocabulary)</li>
+                <li><strong>Instance</strong>: Actual data conforming to schema</li>
+            </ul>
+
+            <h3>RDFS vs OWL</h3>
+            <table style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="background: #e2e8f0;">
+                    <th style="padding: 10px; border: 1px solid #ccc;">Feature</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">RDFS</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">OWL</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Expressiveness</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Basic</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Rich</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 10px; border: 1px solid #ccc;">Constraints</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Limited</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Comprehensive</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Reasoning</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Basic inference</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Advanced reasoning</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 10px; border: 1px solid #ccc;">Use Case</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Simple vocabularies</td>
+                    <td style="padding: 10px; border: 1px solid #ccc;">Complex ontologies</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="note-section">
+            <h2>📝 Exam Tips</h2>
+            <ul>
+                <li>Understand <span class="highlight">RDF triple structure</span></li>
+                <li>Know <span class="highlight">serialization formats</span> (Turtle, RDF/XML)</li>
+                <li>Master <span class="highlight">RDFS properties</span>: domain, range, subClassOf</li>
+                <li>Practice <span class="highlight">drawing knowledge graphs</span></li>
+                <li>Understand <span class="highlight">OWL reasoning</span> tasks</li>
+                <li>Know difference between <span class="highlight">RDFS and OWL</span></li>
+                <li>Be able to write <span class="highlight">SPARQL queries</span></li>
+                <li>Understand <span class="highlight">Linked Data principles</span></li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center; color: #666;">
+            <p>Good luck with your studies! 🎓</p>
+            <a href="../index.html" class="back-link" style="margin-top: 20px;">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
