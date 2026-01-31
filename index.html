@@ -1,369 +1,1700 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Big Data Management - Semantic Web &amp; Knowledge Graphs</title>
-  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" rel="stylesheet" />
-  <style>
-    :root {
-      scroll-padding-top: 5rem;
-    }
-    body {
-      min-height: 100vh;
-      background: linear-gradient(180deg, #f8f9fa 0%, #eef2ff 100%);
-    }
-    .video-note {
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
-    .card-footer .btn + .btn {
-      margin-top: 0.5rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Web & Knowledge Graphs | Big Data Management</title>
+    <meta name="description" content="Professional learning platform for Semantic Web & Knowledge Graphs course - MSc Artificial Intelligence at Heriot-Watt University">
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --bg-card-hover: #232d42;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d3a4f;
+            --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+            --glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+            --gradient-primary: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            --gradient-purple: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Layout */
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .sidebar-brand .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-brand span {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-section-title {
+            padding: 0.75rem 1.5rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-left-color: var(--accent-cyan);
+        }
+
+        .nav-link.active {
+            background: var(--bg-card);
+            color: var(--accent-cyan);
+            border-left-color: var(--accent-cyan);
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-top: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .search-result-item .badge {
+            font-size: 0.65rem;
+        }
+
+        /* Page Content */
+        .page-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 30%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .instructor-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .instructor-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-purple);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .instructor-details h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .instructor-details p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Bookmarks Section */
+        .bookmarks-section {
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .bookmarks-section.has-bookmarks {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .section-title i {
+            color: var(--accent-orange);
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-lecture {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .badge-quiz {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .badge-resource {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .badge-video {
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--accent-pink);
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0.25rem;
+        }
+
+        .bookmark-btn:hover {
+            color: var(--accent-orange);
+            transform: scale(1.1);
+        }
+
+        .bookmark-btn.active {
+            color: var(--accent-orange);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .card-topics {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.25rem 0;
+        }
+
+        .card-topics li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.35rem 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .card-topics li i {
+            color: var(--accent-cyan);
+            font-size: 0.7rem;
+            margin-top: 0.35rem;
+        }
+
+        .card-materials {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .material-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.875rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .material-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .material-btn i {
+            font-size: 0.9rem;
+        }
+
+        /* Week Sections */
+        .week-section {
+            margin-bottom: 3rem;
+        }
+
+        .week-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .week-number {
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .week-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        /* Video Section */
+        .video-section {
+            margin-bottom: 3rem;
+        }
+
+        .video-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .video-tab {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .video-tab:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .video-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .video-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-wrapper video,
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+        }
+
+        .video-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .video-info {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .video-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .video-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Quiz Section */
+        .quiz-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .quiz-card:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .quiz-info {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .quiz-stat i {
+            color: var(--accent-purple);
+        }
+
+        .quiz-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-purple);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+            color: white;
+        }
+
+        /* Assessment Section */
+        .assessment-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .assessment-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .assessment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .assessment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .assessment-weight {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .assessment-progress {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .assessment-progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .assessment-details {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .assessment-details strong {
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand img {
+            height: 40px;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .overlay.active {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.25rem;
+            }
+
+            .hero-stats {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 1rem;
+            }
+
+            .hero-section {
+                padding: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 1.75rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* Highlight for search */
+        .highlight {
+            background: rgba(6, 182, 212, 0.3);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
 </head>
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm" data-bs-theme="light">
-    <div class="container-xxl">
-      <a class="navbar-brand fw-semibold" href="#">Big Data Management</a>
-      <button aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#topNav" data-bs-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="topNav">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="#videos">Videos</a></li>
-          <li class="nav-item"><a class="nav-link" href="#weeks">Weeks</a></li>
-          <li class="nav-item"><a class="nav-link" href="#quizzes">Quizzes</a></li>
-          <li class="nav-item"><a class="nav-link" href="#assessment">Assessment</a></li>
-        </ul>
-      </div>
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-brand">
+                    <div class="logo-icon">
+                        <i class="bi bi-database"></i>
+                    </div>
+                    <span>Big Data Management</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Quick Access</div>
+                <a href="#bookmarks" class="nav-link" id="bookmarksNavLink" style="display: none;">
+                    <i class="bi bi-bookmark-star-fill"></i>
+                    Bookmarks
+                    <span class="badge bg-warning text-dark ms-auto" id="bookmarkCount">0</span>
+                </a>
+                <a href="#hero" class="nav-link active">
+                    <i class="bi bi-house"></i>
+                    Overview
+                </a>
+                <a href="#videos" class="nav-link">
+                    <i class="bi bi-play-circle"></i>
+                    Video Lectures
+                </a>
+
+                <div class="nav-section-title">Course Content</div>
+                <a href="#week1" class="nav-link">
+                    <i class="bi bi-1-circle"></i>
+                    Week 1 - Foundations
+                </a>
+                <a href="#week2" class="nav-link">
+                    <i class="bi bi-2-circle"></i>
+                    Week 2 - Ontologies
+                </a>
+
+                <div class="nav-section-title">Practice & Test</div>
+                <a href="#quizzes" class="nav-link">
+                    <i class="bi bi-patch-question"></i>
+                    Quizzes
+                </a>
+                <a href="#assessment" class="nav-link">
+                    <i class="bi bi-clipboard-data"></i>
+                    Assessment Info
+                </a>
+
+                <div class="nav-section-title">Resources</div>
+                <a href="#" class="nav-link" onclick="alert('Coming soon!')">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    All PDFs
+                </a>
+                <a href="#" class="nav-link" onclick="alert('Coming soon!')">
+                    <i class="bi bi-journal-code"></i>
+                    Revision Notes
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar with Search -->
+            <div class="top-bar">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="search-container flex-grow-1">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search lectures, topics, quizzes...">
+                        <div class="search-results" id="searchResults"></div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 ms-3">
+                        <span class="text-muted d-none d-md-block">MSc Artificial Intelligence</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Hero Section -->
+                <section class="hero-section animate-in" id="hero">
+                    <div class="hero-badge">
+                        <i class="bi bi-mortarboard"></i>
+                        Heriot-Watt University
+                    </div>
+                    <h1 class="hero-title">Semantic Web & Knowledge Graphs</h1>
+                    <p class="hero-subtitle">Big Data Management</p>
+                    
+                    <div class="instructor-info">
+                        <div class="instructor-avatar">RM</div>
+                        <div class="instructor-details">
+                            <h4>Dr. Radu Mihailescu</h4>
+                            <p>Associate Professor | Programme Director MSc AI</p>
+                        </div>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar-week"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">2</div>
+                                <div class="stat-label">Weeks</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-play-btn"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">5</div>
+                                <div class="stat-label">Lectures</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-patch-question"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">4</div>
+                                <div class="stat-label">Quizzes</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">8+</div>
+                                <div class="stat-label">Resources</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Bookmarks Section -->
+                <section class="bookmarks-section" id="bookmarks">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="bi bi-bookmark-star-fill"></i>
+                            Your Bookmarks
+                        </h2>
+                    </div>
+                    <div class="row g-4" id="bookmarksContainer"></div>
+                </section>
+
+                <!-- Video Section -->
+                <section class="video-section" id="videos">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="bi bi-play-circle" style="color: var(--accent-pink);"></i>
+                            Video Lectures
+                        </h2>
+                    </div>
+                    
+                    <div class="video-tabs">
+                        <button class="video-tab active" data-week="1">Week 1</button>
+                        <button class="video-tab" data-week="2">Week 2</button>
+                    </div>
+
+                    <div class="video-container">
+                        <div class="video-wrapper" id="videoWrapper">
+                            <!-- Week 1 Video -->
+                            <div class="video-content" data-week="1">
+                                <video controls>
+                                    <source src="week1-websemantics.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <!-- Week 2 Placeholder -->
+                            <div class="video-content" data-week="2" style="display: none;">
+                                <div class="video-placeholder">
+                                    <i class="bi bi-camera-video"></i>
+                                    <p>Week 2 video coming soon</p>
+                                    <small>Replace the src when you upload your video</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <h3 class="video-title" id="videoTitle">Week 1 — Web Semantics</h3>
+                            <div class="video-meta">
+                                <span><i class="bi bi-clock"></i> ~45 min</span>
+                                <span><i class="bi bi-eye"></i> Introduction to Semantic Web</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Week 1 Content -->
+                <section class="week-section" id="week1">
+                    <div class="week-header">
+                        <span class="week-number">Week 1</span>
+                        <h2 class="week-title">Foundations of Semantic Web</h2>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <!-- Lecture 1 -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="introduction big data management course overview structure information knowledge characteristics 5 vs data science process analytics">
+                                <div class="card-header">
+                                    <span class="card-badge badge-lecture"><i class="bi bi-book"></i> Lecture</span>
+                                    <button class="bookmark-btn" data-id="lecture-1" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Introduction to Big Data Management</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> Course Overview & Structure</li>
+                                    <li><i class="bi bi-chevron-right"></i> Data, Information & Knowledge</li>
+                                    <li><i class="bi bi-chevron-right"></i> Big Data Characteristics (5 V's)</li>
+                                    <li><i class="bi bi-chevron-right"></i> Data Science Process</li>
+                                    <li><i class="bi bi-chevron-right"></i> Big Data Analytics & Management</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-file-earmark-pdf"></i> Lecture PDF</a>
+                                    <a href="#" class="material-btn"><i class="bi bi-lightning"></i> Interactive</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lecture 2 -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="knowledge graphs web documents data semantic concepts structure linked open data lod 5 star deployment applications">
+                                <div class="card-header">
+                                    <span class="card-badge badge-lecture"><i class="bi bi-book"></i> Lecture</span>
+                                    <button class="bookmark-btn" data-id="lecture-2" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Knowledge Graphs</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> Web of Documents → Web of Data</li>
+                                    <li><i class="bi bi-chevron-right"></i> Semantic Web Concepts</li>
+                                    <li><i class="bi bi-chevron-right"></i> Knowledge Graph Structure</li>
+                                    <li><i class="bi bi-chevron-right"></i> Linked Open Data (LOD)</li>
+                                    <li><i class="bi bi-chevron-right"></i> 5-Star Deployment Scheme</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-file-earmark-pdf"></i> Lecture PDF</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lecture 3 -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="semantic web technologies technology stack rdf framework triples serialization formats xml turtle json-ld namespaces iris open closed world assumption visualization tools">
+                                <div class="card-header">
+                                    <span class="card-badge badge-lecture"><i class="bi bi-book"></i> Lecture</span>
+                                    <button class="bookmark-btn" data-id="lecture-3" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Semantic Web Technologies</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> Semantic Web Technology Stack</li>
+                                    <li><i class="bi bi-chevron-right"></i> RDF Framework & Triples</li>
+                                    <li><i class="bi bi-chevron-right"></i> Serialization Formats (XML, Turtle, JSON-LD)</li>
+                                    <li><i class="bi bi-chevron-right"></i> Namespaces & IRIs</li>
+                                    <li><i class="bi bi-chevron-right"></i> Open vs Closed World Assumption</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-file-earmark-pdf"></i> Lecture PDF</a>
+                                    <a href="#" class="material-btn"><i class="bi bi-journal-code"></i> RDF Guide</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Week 2 Content -->
+                <section class="week-section" id="week2">
+                    <div class="week-header">
+                        <span class="week-number">Week 2</span>
+                        <h2 class="week-title">Knowledge Representation & Ontologies</h2>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <!-- Lecture 4 -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="rdf schema rdfs skos triple structure vocabularies classes properties domain range taxonomies thesauri inference reasoning linked open vocabularies">
+                                <div class="card-header">
+                                    <span class="card-badge badge-lecture"><i class="bi bi-book"></i> Lecture</span>
+                                    <button class="bookmark-btn" data-id="lecture-4" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">RDF Schema & SKOS</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> RDF Triple Structure Deep Dive</li>
+                                    <li><i class="bi bi-chevron-right"></i> RDF Schema (RDFS) Vocabularies</li>
+                                    <li><i class="bi bi-chevron-right"></i> Classes, Properties, Domain & Range</li>
+                                    <li><i class="bi bi-chevron-right"></i> SKOS for Taxonomies & Thesauri</li>
+                                    <li><i class="bi bi-chevron-right"></i> Inference & Reasoning Basics</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-file-earmark-pdf"></i> Lecture PDF</a>
+                                    <a href="#" class="material-btn"><i class="bi bi-journal-code"></i> RDFS Guide</a>
+                                    <a href="#" class="material-btn"><i class="bi bi-journal-code"></i> SKOS Guide</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lecture 5 -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="owl web ontology language ontology definition purpose tbox abox terminology assertions classes properties individuals reasoning tasks inference protege editor">
+                                <div class="card-header">
+                                    <span class="card-badge badge-lecture"><i class="bi bi-book"></i> Lecture</span>
+                                    <button class="bookmark-btn" data-id="lecture-5" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Introduction to OWL</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> Ontology Definition & Purpose</li>
+                                    <li><i class="bi bi-chevron-right"></i> OWL (Web Ontology Language)</li>
+                                    <li><i class="bi bi-chevron-right"></i> TBox (Terminology) vs ABox (Assertions)</li>
+                                    <li><i class="bi bi-chevron-right"></i> Classes, Properties & Individuals</li>
+                                    <li><i class="bi bi-chevron-right"></i> Protégé Editor Introduction</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-file-earmark-pdf"></i> Lecture PDF</a>
+                                    <a href="#" class="material-btn"><i class="bi bi-journal-code"></i> OWL Guide</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quiz Section -->
+                <section class="week-section" id="quizzes">
+                    <div class="week-header">
+                        <span class="week-number" style="background: var(--gradient-purple);">Practice</span>
+                        <h2 class="week-title">Quizzes & Practice Resources</h2>
+                    </div>
+                    
+                    <div class="alert" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+                        <i class="bi bi-info-circle me-2" style="color: var(--accent-cyan);"></i>
+                        <span style="color: var(--text-secondary);">These quizzes cover content from both Week 1 and Week 2. Use them to test your understanding of all Semantic Web topics.</span>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <!-- Quiz 1 -->
+                        <div class="col-lg-6">
+                            <div class="content-card quiz-card" data-search="semantic web mastery quiz practice test knowledge">
+                                <div class="card-header">
+                                    <span class="card-badge badge-quiz"><i class="bi bi-patch-question"></i> Quiz</span>
+                                    <button class="bookmark-btn" data-id="quiz-1" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Semantic Web Mastery Quiz</h3>
+                                <div class="quiz-info">
+                                    <span class="quiz-stat"><i class="bi bi-clock"></i> ~15 min</span>
+                                    <span class="quiz-stat"><i class="bi bi-list-check"></i> 20 questions</span>
+                                    <span class="quiz-stat"><i class="bi bi-bar-chart"></i> Medium</span>
+                                </div>
+                                <a href="#" class="quiz-btn">
+                                    <i class="bi bi-play-fill"></i> Start Quiz
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Quiz 2 -->
+                        <div class="col-lg-6">
+                            <div class="content-card quiz-card" data-search="ultimate quiz comprehensive test all topics">
+                                <div class="card-header">
+                                    <span class="card-badge badge-quiz"><i class="bi bi-patch-question"></i> Quiz</span>
+                                    <button class="bookmark-btn" data-id="quiz-2" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Ultimate Quiz</h3>
+                                <div class="quiz-info">
+                                    <span class="quiz-stat"><i class="bi bi-clock"></i> ~25 min</span>
+                                    <span class="quiz-stat"><i class="bi bi-list-check"></i> 35 questions</span>
+                                    <span class="quiz-stat"><i class="bi bi-bar-chart"></i> Hard</span>
+                                </div>
+                                <a href="#" class="quiz-btn">
+                                    <i class="bi bi-play-fill"></i> Start Quiz
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Practice 1 -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="interactive exam practice exercises hands-on">
+                                <div class="card-header">
+                                    <span class="card-badge badge-resource"><i class="bi bi-lightning"></i> Practice</span>
+                                    <button class="bookmark-btn" data-id="practice-1" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Interactive Exam Practice</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> Hands-on SPARQL exercises</li>
+                                    <li><i class="bi bi-chevron-right"></i> RDF triple construction</li>
+                                    <li><i class="bi bi-chevron-right"></i> Ontology modeling tasks</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-lightning"></i> Start Practice</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Revision Notes -->
+                        <div class="col-lg-6">
+                            <div class="content-card" data-search="revision notes summary study guide exam preparation">
+                                <div class="card-header">
+                                    <span class="card-badge badge-resource"><i class="bi bi-journal-text"></i> Resource</span>
+                                    <button class="bookmark-btn" data-id="revision-1" title="Bookmark this">
+                                        <i class="bi bi-bookmark"></i>
+                                    </button>
+                                </div>
+                                <h3 class="card-title">Revision Notes</h3>
+                                <ul class="card-topics">
+                                    <li><i class="bi bi-chevron-right"></i> Condensed key concepts</li>
+                                    <li><i class="bi bi-chevron-right"></i> Important definitions</li>
+                                    <li><i class="bi bi-chevron-right"></i> Quick reference diagrams</li>
+                                </ul>
+                                <div class="card-materials">
+                                    <a href="#" class="material-btn"><i class="bi bi-file-earmark-pdf"></i> Download PDF</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Assessment Section -->
+                <section class="assessment-section" id="assessment">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="bi bi-clipboard-data" style="color: var(--accent-green);"></i>
+                            Course Assessment
+                        </h2>
+                    </div>
+                    
+                    <div class="assessment-grid">
+                        <div class="assessment-card">
+                            <div class="assessment-header">
+                                <h3 class="assessment-title">Class Test</h3>
+                                <span class="assessment-weight">20%</span>
+                            </div>
+                            <div class="assessment-progress">
+                                <div class="assessment-progress-bar" style="width: 20%;"></div>
+                            </div>
+                            <div class="assessment-details">
+                                <p><strong>Week 7</strong> — Covers Weeks 1-4</p>
+                                <p>Topics: Ontologies, OWL, SPARQL Queries, RDF/RDFS, Data Integration</p>
+                            </div>
+                        </div>
+
+                        <div class="assessment-card">
+                            <div class="assessment-header">
+                                <h3 class="assessment-title">Final Exam</h3>
+                                <span class="assessment-weight">80%</span>
+                            </div>
+                            <div class="assessment-progress">
+                                <div class="assessment-progress-bar" style="width: 80%;"></div>
+                            </div>
+                            <div class="assessment-details">
+                                <p><strong>Part 1:</strong> Semantic Web (40%)</p>
+                                <p><strong>Part 2:</strong> NoSQL (40%)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-brand">
+                    <i class="bi bi-mortarboard" style="font-size: 1.5rem; color: var(--accent-cyan);"></i>
+                    <span style="font-weight: 600;">Heriot-Watt University</span>
+                </div>
+                <p class="footer-text">MSc Artificial Intelligence</p>
+                <div class="footer-links">
+                    <a href="#">University Portal</a>
+                    <a href="#">Canvas</a>
+                    <a href="#">Library</a>
+                    <a href="#">Contact</a>
+                </div>
+            </footer>
+        </main>
     </div>
-  </nav>
 
-  <!-- MAIN CONTENT -->
-  <div class="container-xxl py-4">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ============================================
+        // MOBILE SIDEBAR TOGGLE
+        // ============================================
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const overlay = document.getElementById('overlay');
 
-    <!-- HEADER -->
-    <header class="bg-white rounded-4 shadow-sm p-4 p-md-5 mb-4 text-center">
-      <h1 class="display-6 fw-bold mb-2">Big Data Management</h1>
-      <p class="lead mb-1 text-secondary">Semantic Web &amp; Knowledge Graphs</p>
-      <p class="mb-0 text-secondary">Dr. Radu Mihailescu | Associate Professor | Programme Director MSc AI</p>
-    </header>
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            mobileToggle.querySelector('i').classList.toggle('bi-list');
+            mobileToggle.querySelector('i').classList.toggle('bi-x');
+        });
 
-    <!-- VIDEO SECTION -->
-    <section class="mb-4" id="videos">
-      <div class="card shadow-sm rounded-4">
-        <div class="card-body p-3 p-md-4">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-            <div>
-              <h2 class="h4 mb-1">Module Videos</h2>
-              <div class="video-note">Week 1 is live. Week 2 has placeholders you can swap with your next uploads.</div>
-            </div>
-          </div>
-          <div class="accordion" id="videoAccordion">
-            <!-- Week 1 Videos -->
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="vidW1Head">
-                <button aria-controls="vidW1" aria-expanded="true" class="accordion-button" data-bs-target="#vidW1" data-bs-toggle="collapse" type="button">
-                  Week 1 — Web Semantics
-                </button>
-              </h2>
-              <div aria-labelledby="vidW1Head" class="accordion-collapse collapse show" data-bs-parent="#videoAccordion" id="vidW1">
-                <div class="accordion-body">
-                  <div class="ratio ratio-16x9 rounded overflow-hidden border bg-dark">
-                    <video class="w-100 h-100" controls preload="metadata" style="object-fit: contain;">
-                      <source src="videos/What_is_the_Semantic_Web_%20(1)%20(1).mp4" type="video/mp4" />
-                    </video>
-                  </div>
-                  <div class="mt-2 small text-secondary">
-                    Replace the <code>src</code> if you rename the file. Keep filenames clean (no spaces) for GitHub Pages.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Week 2 Videos -->
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="vidW2Head">
-                <button aria-controls="vidW2" aria-expanded="false" class="accordion-button collapsed" data-bs-target="#vidW2" data-bs-toggle="collapse" type="button">
-                  Week 2 — Placeholders
-                </button>
-              </h2>
-              <div aria-labelledby="vidW2Head" class="accordion-collapse collapse" data-bs-parent="#videoAccordion" id="vidW2">
-                <div class="accordion-body">
-                  <div class="row row-cols-1 row-cols-md-2 g-3">
-                    <div class="col">
-                      <div class="card h-100 border-0 bg-body-tertiary">
-                        <div class="card-body">
-                          <div class="fw-semibold mb-2">Week 2 Video A (placeholder)</div>
-                          <div class="ratio ratio-16x9 rounded overflow-hidden border bg-white d-flex align-items-center justify-content-center text-secondary">
-                            <div class="text-center px-3">
-                              <div class="fw-semibold">No video yet</div>
-                              <div class="small">Drop your MP4 into <code>videos/</code> and update the <code>src</code>.</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-0 pt-0">
-                          <code class="small">src="videos/week2-video-a.mp4"</code>
-                        </div>
-                      </div>
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            mobileToggle.querySelector('i').classList.add('bi-list');
+            mobileToggle.querySelector('i').classList.remove('bi-x');
+        });
+
+        // ============================================
+        // SMOOTH SCROLL & ACTIVE NAV HIGHLIGHTING
+        // ============================================
+        document.querySelectorAll('.nav-link[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Close mobile sidebar
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+                // Update active state
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        // ============================================
+        // SEARCH FUNCTIONALITY
+        // ============================================
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        // Search data from all content
+        const searchableItems = [];
+        document.querySelectorAll('.content-card').forEach((card, index) => {
+            const title = card.querySelector('.card-title')?.textContent || '';
+            const searchData = card.getAttribute('data-search') || '';
+            const topics = Array.from(card.querySelectorAll('.card-topics li')).map(li => li.textContent).join(' ');
+            const badge = card.querySelector('.card-badge')?.textContent || '';
+            
+            searchableItems.push({
+                id: index,
+                title: title,
+                keywords: `${title} ${searchData} ${topics}`.toLowerCase(),
+                type: badge.includes('Quiz') ? 'quiz' : badge.includes('Lecture') ? 'lecture' : 'resource',
+                element: card
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query.length < 2) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            const matches = searchableItems.filter(item => item.keywords.includes(query));
+            
+            if (matches.length > 0) {
+                searchResults.innerHTML = matches.map(item => `
+                    <div class="search-result-item" data-id="${item.id}">
+                        <span class="badge ${item.type === 'quiz' ? 'bg-purple' : item.type === 'lecture' ? 'bg-primary' : 'bg-success'}" 
+                              style="background: ${item.type === 'quiz' ? 'var(--accent-purple)' : item.type === 'lecture' ? 'var(--accent-blue)' : 'var(--accent-green)'} !important;">
+                            ${item.type}
+                        </span>
+                        <span>${item.title}</span>
                     </div>
-                    <div class="col">
-                      <div class="card h-100 border-0 bg-body-tertiary">
-                        <div class="card-body">
-                          <div class="fw-semibold mb-2">Week 2 Video B (placeholder)</div>
-                          <div class="ratio ratio-16x9 rounded overflow-hidden border bg-white d-flex align-items-center justify-content-center text-secondary">
-                            <div class="text-center px-3">
-                              <div class="fw-semibold">No video yet</div>
-                              <div class="small">Drop your MP4 into <code>videos/</code> and update the <code>src</code>.</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-0 pt-0">
-                          <code class="small">src="videos/week2-video-b.mp4"</code>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="mt-3 small text-secondary">
-                    When you add Week 2 videos, replace each placeholder box with a real <code>&lt;video&gt;</code> tag (same pattern as Week 1).
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                `).join('');
+                searchResults.classList.add('active');
+            } else {
+                searchResults.innerHTML = '<div class="search-result-item"><span class="text-muted">No results found</span></div>';
+                searchResults.classList.add('active');
+            }
+        });
 
-    <!-- WEEKS SECTION -->
-    <section id="weeks" class="mb-4">
-      <h2 class="h4 mb-3">Weeks</h2>
+        // Click on search result
+        searchResults.addEventListener('click', (e) => {
+            const item = e.target.closest('.search-result-item');
+            if (item && item.dataset.id !== undefined) {
+                const match = searchableItems[parseInt(item.dataset.id)];
+                if (match && match.element) {
+                    match.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    match.element.style.boxShadow = '0 0 0 3px var(--accent-cyan)';
+                    setTimeout(() => {
+                        match.element.style.boxShadow = '';
+                    }, 2000);
+                }
+                searchResults.classList.remove('active');
+                searchInput.value = '';
+            }
+        });
 
-      <!-- WEEK 1 -->
-      <div class="card shadow-sm rounded-4 mb-4 overflow-hidden">
-        <div class="card-header bg-white py-3">
-          <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-            <span class="badge text-bg-primary px-3 py-2">WEEK 1</span>
-            <span class="h6 m-0 flex-grow-1">Foundations of Semantic Web</span>
-            <a class="btn btn-sm btn-outline-primary" href="notes/Week%201%20Notes.pdf">View Lecture Notes</a>
-          </div>
-        </div>
-        <div class="card-body p-3 p-md-4">
-          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 g-lg-4">
-            <!-- Lecture 11 -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                  <span class="badge text-bg-primary">L11</span>
-                  <span class="badge text-bg-secondary">PDF</span>
-                </div>
-                <div class="card-body">
-                  <h3 class="h6 fw-semibold">Introduction to Big Data Management</h3>
-                  <ul class="mb-0 small list-unstyled mt-3">
-                    <li class="mb-1">• Course Overview &amp; Structure</li>
-                    <li class="mb-1">• Data, Information &amp; Knowledge</li>
-                    <li class="mb-1">• Big Data Characteristics (5 V's)</li>
-                    <li class="mb-1">• Data Science Process</li>
-                    <li class="mb-1">• Big Data Analytics &amp; Management</li>
-                  </ul>
-                </div>
-                <div class="card-footer bg-white">
-                  <div class="fw-semibold small mb-2">📚 Materials:</div>
-                  <a class="btn btn-sm btn-primary w-100" href="lectures/W1_L11_introduction.pdf">View Lecture PDF</a>
-                </div>
-              </div>
-            </div>
-            <!-- Lecture 12 -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                  <span class="badge text-bg-primary">L12</span>
-                  <span class="badge text-bg-secondary">PDF + Example</span>
-                </div>
-                <div class="card-body">
-                  <h3 class="h6 fw-semibold">Knowledge Graphs</h3>
-                  <ul class="mb-0 small list-unstyled mt-3">
-                    <li class="mb-1">• Web of Documents → Web of Data</li>
-                    <li class="mb-1">• Semantic Web Concepts</li>
-                    <li class="mb-1">• Knowledge Graph Structure</li>
-                    <li class="mb-1">• Linked Open Data (LOD)</li>
-                    <li class="mb-1">• 5-Star Deployment Scheme</li>
-                    <li class="mb-1">• Real-world Applications</li>
-                  </ul>
-                </div>
-                <div class="card-footer bg-white">
-                  <div class="fw-semibold small mb-2">📚 Materials:</div>
-                  <a class="btn btn-sm btn-primary w-100" href="lectures/W1_L12_knowledge_graph.pdf">View Lecture PDF</a>
-                  <a class="btn btn-sm btn-outline-primary w-100" href="examples/knowledge_graph_example.html">Interactive Example</a>
-                </div>
-              </div>
-            </div>
-            <!-- Lecture 13 -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                  <span class="badge text-bg-primary">L13</span>
-                  <span class="badge text-bg-secondary">PDF + Guide</span>
-                </div>
-                <div class="card-body">
-                  <h3 class="h6 fw-semibold">Semantic Web Technologies</h3>
-                  <ul class="mb-0 small list-unstyled mt-3">
-                    <li class="mb-1">• Semantic Web Technology Stack</li>
-                    <li class="mb-1">• RDF Framework &amp; Triples</li>
-                    <li class="mb-1">• Serialization Formats (XML, Turtle, JSON-LD)</li>
-                    <li class="mb-1">• Namespaces &amp; IRIs</li>
-                    <li class="mb-1">• Open vs Closed World Assumption</li>
-                    <li class="mb-1">• RDF Visualization Tools</li>
-                  </ul>
-                </div>
-                <div class="card-footer bg-white">
-                  <div class="fw-semibold small mb-2">📚 Materials:</div>
-                  <a class="btn btn-sm btn-primary w-100" href="lectures/W1_L13_sw_technologies.pdf">View Lecture PDF</a>
-                  <a class="btn btn-sm btn-outline-primary w-100" href="explanations/rdf_explanation.html">RDF Guide</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchResults.classList.remove('active');
+            }
+        });
 
-      <!-- WEEK 2 -->
-      <div class="card shadow-sm rounded-4 mb-4 overflow-hidden">
-        <div class="card-header bg-white py-3">
-          <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-            <span class="badge text-bg-primary px-3 py-2">WEEK 2</span>
-            <span class="h6 m-0 flex-grow-1">Knowledge Representation &amp; Ontologies</span>
-            <a class="btn btn-sm btn-outline-primary" href="notes/Week%202%20Notes.pdf">View Lecture Notes</a>
-          </div>
-        </div>
-        <div class="card-body p-3 p-md-4">
-          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 g-lg-4">
-            <!-- Lecture 21 -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                  <span class="badge text-bg-primary">L21</span>
-                  <span class="badge text-bg-secondary">PDF + Guides</span>
-                </div>
-                <div class="card-body">
-                  <h3 class="h6 fw-semibold">RDF Schema &amp; SKOS</h3>
-                  <ul class="mb-0 small list-unstyled mt-3">
-                    <li class="mb-1">• RDF Triple Structure Deep Dive</li>
-                    <li class="mb-1">• RDF Schema (RDFS) Vocabularies</li>
-                    <li class="mb-1">• Classes, Properties, Domain &amp; Range</li>
-                    <li class="mb-1">• SKOS for Taxonomies &amp; Thesauri</li>
-                    <li class="mb-1">• Inference &amp; Reasoning Basics</li>
-                    <li class="mb-1">• Linked Open Vocabularies</li>
-                  </ul>
-                </div>
-                <div class="card-footer bg-white">
-                  <div class="fw-semibold small mb-2">📚 Materials:</div>
-                  <a class="btn btn-sm btn-primary w-100" href="lectures/W2_L21_knowledge_representation.pdf">View Lecture PDF</a>
-                  <a class="btn btn-sm btn-outline-primary w-100" href="explanations/rdfs_explanation.html">RDFS Guide</a>
-                  <a class="btn btn-sm btn-outline-primary w-100" href="explanations/skos_explanation.html">SKOS Guide</a>
-                </div>
-              </div>
-            </div>
-            <!-- Lecture 22 -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                  <span class="badge text-bg-primary">L22</span>
-                  <span class="badge text-bg-secondary">PDF + Guide</span>
-                </div>
-                <div class="card-body">
-                  <h3 class="h6 fw-semibold">Introduction to OWL</h3>
-                  <ul class="mb-0 small list-unstyled mt-3">
-                    <li class="mb-1">• Ontology Definition &amp; Purpose</li>
-                    <li class="mb-1">• OWL (Web Ontology Language)</li>
-                    <li class="mb-1">• TBox (Terminology) vs ABox (Assertions)</li>
-                    <li class="mb-1">• Classes, Properties &amp; Individuals</li>
-                    <li class="mb-1">• Reasoning Tasks &amp; Inference</li>
-                    <li class="mb-1">• Protégé Editor Introduction</li>
-                  </ul>
-                </div>
-                <div class="card-footer bg-white">
-                  <div class="fw-semibold small mb-2">📚 Materials:</div>
-                  <a class="btn btn-sm btn-primary w-100" href="lectures/W2_L22-intro_OWL.pdf">View Lecture PDF</a>
-                  <a class="btn btn-sm btn-outline-primary w-100" href="explanations/owl_explanation.html">OWL Guide</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        // ============================================
+        // BOOKMARKS FUNCTIONALITY
+        // ============================================
+        const BOOKMARKS_KEY = 'semantic-web-bookmarks';
 
-    <!-- PRACTICE & ASSESSMENT SECTION -->
-    <section class="mb-4" id="quizzes">
-      <div class="card shadow-sm rounded-4">
-        <div class="card-body p-3 p-md-4">
-          <h2 class="h4 mb-3">Practice &amp; Assessment Resources</h2>
-          <div class="alert alert-info d-flex align-items-start gap-2 mb-4">
-            <span class="fw-bold">📌</span>
-            <div>
-              <strong>Note:</strong> These quizzes and practice materials cover content from <strong>both Week 1 and Week 2</strong>. Use them to test your understanding of all topics covered in the Semantic Web portion of the course.
-            </div>
-          </div>
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
-            <div class="col">
-              <a class="btn btn-primary w-100 h-100 d-flex flex-column justify-content-center py-3" href="quizzes/semantic_web_mastery_quiz.html">
-                <span class="fw-semibold">Semantic Web Mastery Quiz</span>
-                <small class="opacity-75">Comprehensive coverage</small>
-              </a>
-            </div>
-            <div class="col">
-              <a class="btn btn-primary w-100 h-100 d-flex flex-column justify-content-center py-3" href="quizzes/ultimate_quiz.html">
-                <span class="fw-semibold">Ultimate Quiz</span>
-                <small class="opacity-75">Advanced questions</small>
-              </a>
-            </div>
-            <div class="col">
-              <a class="btn btn-primary w-100 h-100 d-flex flex-column justify-content-center py-3" href="quizzes/interactive_exam_practice.html">
-                <span class="fw-semibold">Interactive Exam Practice</span>
-                <small class="opacity-75">Exam-style questions</small>
-              </a>
-            </div>
-            <div class="col">
-              <a class="btn btn-outline-primary w-100 h-100 d-flex flex-column justify-content-center py-3" href="revision/revision_notes.html">
-                <span class="fw-semibold">Revision Notes</span>
-                <small class="opacity-75">Study guide &amp; summary</small>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        function getBookmarks() {
+            try {
+                return JSON.parse(localStorage.getItem(BOOKMARKS_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
 
-    <!-- FOOTER / ASSESSMENT INFO -->
-    <footer class="card shadow-sm rounded-4 mb-4" id="assessment">
-      <div class="card-body p-3 p-md-4">
-        <h3 class="h5 mb-3">📋 Course Assessment</h3>
-        <div class="row row-cols-1 row-cols-md-2 g-3 mb-3">
-          <div class="col">
-            <div class="bg-body-tertiary rounded-3 p-3 h-100">
-              <div class="fw-semibold text-primary mb-1">Class Test</div>
-              <div class="h4 mb-1">20%</div>
-              <div class="small text-secondary">Week 7 - Covers Weeks 1-4</div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="bg-body-tertiary rounded-3 p-3 h-100">
-              <div class="fw-semibold text-primary mb-1">Final Exam</div>
-              <div class="h4 mb-1">80%</div>
-              <div class="small text-secondary">Part 1: 40% Semantic Web | Part 2: 40% NoSQL</div>
-            </div>
-          </div>
-        </div>
-        <hr />
-        <p class="mb-1"><strong>Topics Covered:</strong> Ontologies, OWL, SPARQL Queries, RDF/RDFS, Data Integration</p>
-        <p class="mb-0 small text-secondary">Heriot-Watt University | MSc Artificial Intelligence</p>
-      </div>
-    </footer>
+        function saveBookmarks(bookmarks) {
+            localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+        }
 
-  </div>
+        function updateBookmarkUI() {
+            const bookmarks = getBookmarks();
+            const bookmarksSection = document.getElementById('bookmarks');
+            const bookmarksContainer = document.getElementById('bookmarksContainer');
+            const bookmarksNavLink = document.getElementById('bookmarksNavLink');
+            const bookmarkCount = document.getElementById('bookmarkCount');
 
-  <script crossorigin="anonymous" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+            // Update bookmark buttons
+            document.querySelectorAll('.bookmark-btn').forEach(btn => {
+                const id = btn.dataset.id;
+                const icon = btn.querySelector('i');
+                if (bookmarks.includes(id)) {
+                    btn.classList.add('active');
+                    icon.classList.remove('bi-bookmark');
+                    icon.classList.add('bi-bookmark-fill');
+                } else {
+                    btn.classList.remove('active');
+                    icon.classList.add('bi-bookmark');
+                    icon.classList.remove('bi-bookmark-fill');
+                }
+            });
+
+            // Update bookmarks section visibility
+            if (bookmarks.length > 0) {
+                bookmarksSection.classList.add('has-bookmarks');
+                bookmarksNavLink.style.display = 'flex';
+                bookmarkCount.textContent = bookmarks.length;
+
+                // Populate bookmarks
+                bookmarksContainer.innerHTML = '';
+                bookmarks.forEach(id => {
+                    const originalBtn = document.querySelector(`.bookmark-btn[data-id="${id}"]`);
+                    if (originalBtn) {
+                        const originalCard = originalBtn.closest('.content-card');
+                        if (originalCard) {
+                            const clone = originalCard.cloneNode(true);
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'col-lg-6';
+                            wrapper.appendChild(clone);
+                            bookmarksContainer.appendChild(wrapper);
+                            
+                            // Re-attach event listener to cloned bookmark button
+                            const clonedBtn = clone.querySelector('.bookmark-btn');
+                            clonedBtn.addEventListener('click', () => toggleBookmark(id));
+                        }
+                    }
+                });
+            } else {
+                bookmarksSection.classList.remove('has-bookmarks');
+                bookmarksNavLink.style.display = 'none';
+            }
+        }
+
+        function toggleBookmark(id) {
+            const bookmarks = getBookmarks();
+            const index = bookmarks.indexOf(id);
+            
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+            } else {
+                bookmarks.push(id);
+            }
+            
+            saveBookmarks(bookmarks);
+            updateBookmarkUI();
+        }
+
+        // Attach event listeners to bookmark buttons
+        document.querySelectorAll('.bookmark-btn').forEach(btn => {
+            btn.addEventListener('click', () => toggleBookmark(btn.dataset.id));
+        });
+
+        // Initialize bookmarks on page load
+        updateBookmarkUI();
+
+        // ============================================
+        // VIDEO TABS
+        // ============================================
+        const videoTabs = document.querySelectorAll('.video-tab');
+        const videoContents = document.querySelectorAll('.video-content');
+        const videoTitle = document.getElementById('videoTitle');
+
+        const videoTitles = {
+            '1': 'Week 1 — Web Semantics',
+            '2': 'Week 2 — Coming Soon'
+        };
+
+        videoTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const week = tab.dataset.week;
+                
+                // Update active tab
+                videoTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding video
+                videoContents.forEach(content => {
+                    content.style.display = content.dataset.week === week ? 'block' : 'none';
+                });
+                
+                // Update title
+                videoTitle.textContent = videoTitles[week];
+            });
+        });
+
+        // ============================================
+        // ANIMATE ON SCROLL
+        // ============================================
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.content-card, .assessment-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
 </body>
 </html>
