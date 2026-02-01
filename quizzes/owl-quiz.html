@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced OWL Quiz - Big Data Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-header {
+            margin-bottom: 2rem;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+
+        .question-type {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: #8b5cf6;
+            background: #faf5ff;
+            transform: translateX(8px);
+        }
+
+        .option.selected {
+            border-color: #8b5cf6;
+            background: #f3e8ff;
+        }
+
+        .option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option-indicator {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-indicator {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: white;
+        }
+
+        .option.correct .option-indicator {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .option.incorrect .option-indicator {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+
+        .option-text {
+            font-size: 1rem;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .explanation {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            border-radius: 12px;
+        }
+
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: 0.75rem;
+        }
+
+        .explanation-text {
+            color: #334155;
+            line-height: 1.7;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1e293b;
+        }
+
+        .btn-disabled {
+            background: #475569;
+            color: white;
+        }
+
+        .question-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dot:hover {
+            transform: scale(1.3);
+        }
+
+        .dot.answered {
+            background: #10b981;
+        }
+
+        .dot.current {
+            background: #8b5cf6;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #8b5cf6;
+        }
+
+        .dot.unanswered {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .results-score {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .results-message {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 2rem;
+        }
+
+        .results-breakdown {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .breakdown-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .review-section {
+            margin-top: 3rem;
+        }
+
+        .review-question {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-status {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .review-status.correct {
+            background: #10b981;
+        }
+
+        .review-status.incorrect {
+            background: #ef4444;
+        }
+
+        .review-question-text {
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .review-answer {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .review-answer-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .review-answer-text {
+            color: #1e293b;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .quiz-card {
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app"></div>
+
+    <script>
+        // Questions data
+        const questions = [
+            {
+                id: 1,
+                type: 'multiple-choice',
+                question: 'A Knowledge Graph uses the Description Logic SHOIN. Based on this, what can you definitively conclude?',
+                options: [
+                    'The ontology will have decidable reasoning',
+                    'The ontology supports inverse properties but not cardinality restrictions',
+                    'The ontology cannot use SWRL rules',
+                    'The ontology is equivalent to OWL Full'
+                ],
+                correct: 0,
+                explanation: 'SHOIN corresponds to OWL-DL, which is designed specifically to maintain decidability while offering high expressiveness. The "S" indicates ALC plus transitive properties, "H" adds role hierarchy, "O" adds nominals, "I" adds inverse properties, and "N" adds cardinality restrictions. OWL-DL guarantees that all reasoning tasks will terminate, unlike OWL Full.'
+            },
+            {
+                id: 2,
+                type: 'scenario',
+                question: 'You define: HappyPerson ⊑ hasChild only HappyPerson. Alice is classified as a HappyPerson but has no recorded children in your knowledge base. Is this consistent?',
+                options: [
+                    'No, this violates the restriction because HappyPerson requires having happy children',
+                    'Yes, "only" does not guarantee existence—it only constrains children IF they exist',
+                    'No, the reasoner will infer Alice must have at least one child',
+                    'Yes, but only under Closed World Assumption'
+                ],
+                correct: 1,
+                explanation: 'This is a critical distinction! "hasChild only HappyPerson" uses universal quantification (∀), which translates to: "IF Alice has children, THEN all of them must be HappyPerson." If Alice has zero children, this constraint is vacuously satisfied. To require existence, you need "hasChild some HappyPerson" (∃). OWL operates under Open World Assumption, so absence of children doesn\'t mean they don\'t exist—it means we don\'t know.'
+            },
+            {
+                id: 3,
+                type: 'multiple-choice',
+                question: 'Which statement about Description Logics versus First-Order Logic is most accurate?',
+                options: [
+                    'DL sacrifices all expressiveness to achieve decidability',
+                    'DL uses carefully selected FOL fragments to balance expressiveness and decidability',
+                    'DL is more expressive than FOL but computationally expensive',
+                    'DL and FOL have identical expressiveness but different syntax'
+                ],
+                correct: 1,
+                explanation: 'Description Logics use strategic fragments of First-Order Logic. They deliberately restrict which FOL constructs are allowed to ensure reasoning remains decidable and computationally tractable. This is the fundamental trade-off: DL is LESS expressive than full FOL, but gains guaranteed decidability. For example, DL typically restricts variables to specific patterns, avoiding arbitrary quantifier nesting that makes FOL undecidable.'
+            },
+            {
+                id: 4,
+                type: 'code-analysis',
+                question: 'Examine this property chain: hasGrandparent ≡ hasParent ∘ hasParent. If you also define hasParent as transitive, what logical consequence occurs?',
+                options: [
+                    'The property chain becomes redundant because transitivity already covers grandparents',
+                    'You create an inconsistency because property chains and transitivity conflict',
+                    'Transitivity will infer ALL ancestors through hasParent, making hasGrandparent a strict subset',
+                    'Nothing changes—property chains and transitivity operate independently'
+                ],
+                correct: 2,
+                explanation: 'Declaring hasParent as transitive means: if hasParent(x,y) ∧ hasParent(y,z) → hasParent(x,z). This will chain indefinitely, making hasParent connect you to ALL ancestors (parents, grandparents, great-grandparents, etc.). Meanwhile, hasGrandparent specifically captures only the 2-hop relationship. So transitivity doesn\'t make the property chain redundant—it actually makes hasParent far more general. This demonstrates why you must carefully consider property characteristics in ontology design.'
+            },
+            {
+                id: 5,
+                type: 'debugging',
+                question: 'Your ontology defines: MeatLoversPizza ⊑ hasTopping only Meat. The reasoner classifies a plain crust with no toppings as a MeatLoversPizza. What is the root cause?',
+                options: [
+                    'The reasoner has a bug in handling universal restrictions',
+                    'Universal quantification ("only") is satisfied when there are zero instances',
+                    'You forgot to declare Meat and hasTopping as disjoint',
+                    'Plain crust should be explicitly defined as ¬MeatLoversPizza'
+                ],
+                correct: 1,
+                explanation: 'This is the classic "only" trap! Universal quantification states: "FOR ALL toppings, IF they exist, they must be Meat." With zero toppings, this is vacuously true—there are no counter-examples. The fix is closure: MeatLoversPizza ⊑ (hasTopping some Meat) ⊓ (hasTopping only Meat). "Some" guarantees at least one meat topping exists, while "only" forbids non-meat toppings. Both together create the intended constraint.'
+            },
+            {
+                id: 6,
+                type: 'conceptual',
+                question: 'What is the fundamental difference between ⊑ (SubClassOf) and ≡ (EquivalentTo) in terms of inference?',
+                options: [
+                    'Both allow bidirectional inference, but ≡ is computationally faster',
+                    '⊑ allows one-way inference (A→B), while ≡ enables auto-classification in both directions',
+                    '⊑ is used for individuals, ≡ is used for classes',
+                    'There is no practical difference—both create the same logical entailments'
+                ],
+                correct: 1,
+                explanation: 'This is crucial for ontology design! SubClassOf (⊑) creates a one-way implication: if x is A, we can infer x is B, but NOT vice versa. EquivalentTo (≡) is bidirectional: A ≡ B means A ⊑ B AND B ⊑ A. This enables automatic classification: if you assert x is B, the reasoner can infer x is A. Example: Mother ≡ Woman ⊓ Parent means asserting someone as a Woman who is a Parent automatically classifies them as Mother. With just ⊑, that inference wouldn\'t happen.'
+            },
+            {
+                id: 7,
+                type: 'property-reasoning',
+                question: 'Property P is declared as both Functional and InverseFunctional. What does this guarantee about the relationship?',
+                options: [
+                    'P must be symmetric',
+                    'P creates a one-to-one (1:1) mapping between individuals',
+                    'P must also be transitive',
+                    'P can only connect individuals within the same class'
+                ],
+                correct: 1,
+                explanation: 'Functional means: each domain individual can relate to AT MOST one range individual (source → 1 target). InverseFunctional means: each range individual can be related to AT MOST one domain individual (1 source ← target). Together, they create a perfect 1:1 bijection. Example: hasHusband in strictly monogamous marriages. If both properties are declared, asserting hasHusband(Mary, John) and hasHusband(Mary, Bob) would make the reasoner infer John = Bob (same individual).'
+            },
+            {
+                id: 8,
+                type: 'cardinality',
+                question: 'An ontology states: Person ⊑ hasChild max 4 Parent. John hasChild Alice, Bob, Carol (all Parents), and David (a Student). Does this satisfy the constraint?',
+                options: [
+                    'No, John has 4 children total, violating max 4',
+                    'Yes, only 3 children are Parents, which is ≤ 4',
+                    'No, David must be explicitly stated as ¬Parent',
+                    'Depends on Open vs Closed World Assumption'
+                ],
+                correct: 1,
+                explanation: 'This tests understanding of QUALIFIED cardinality. "hasChild max 4 Parent" means "at most 4 children who are instances of Parent class." It counts only the Parent-typed children (Alice, Bob, Carol = 3), ignoring David who is a Student. Note: OWL uses Open World Assumption, so if we don\'t know whether David is a Parent, we can\'t assume he isn\'t. But the question states David IS a Student, and typically Student and Parent would be disjoint classes. The key insight: qualified cardinality filters by type.'
+            },
+            {
+                id: 9,
+                type: 'swrl',
+                question: 'You create the SWRL rule: childOf(?x, ?y) ∧ likeSport(?y, ?s) → likeSport(?x, ?s). After running the reasoner with this data: childOf(Alice, Bob) and likeSport(Bob, Football), what will be inferred?',
+                options: [
+                    'Nothing, because SWRL rules require explicit rule execution separate from OWL reasoning',
+                    'likeSport(Alice, Football) will be automatically inferred',
+                    'The ontology becomes inconsistent due to the SWRL rule',
+                    'SWRL rules cannot reference object properties like likeSport'
+                ],
+                correct: 0,
+                explanation: 'SWRL (Semantic Web Rule Language) rules are NOT part of standard OWL reasoning! They require a separate rule engine (like Pellet or Drools). While OWL reasoners perform standard DL inference (subsumption, classification, etc.), SWRL rules must be explicitly processed by a rule engine that can fire rules and add new assertions. Many ontology users mistakenly expect SWRL rules to "just work" when they run a standard reasoner, but rules need specific execution. This is why SWRL is considered an extension to OWL, not a core feature.'
+            },
+            {
+                id: 10,
+                type: 'multiple-choice',
+                question: 'In the context of LLMs and Knowledge Graphs, what is the primary benefit of "Knowledge-Augmented Language Model Prompting (KAPING)"?',
+                options: [
+                    'It eliminates the need for training LLMs by embedding all knowledge in prompts',
+                    'It reduces hallucinations by injecting relevant factual KG data into the prompt context',
+                    'It allows LLMs to directly update and maintain Knowledge Graphs',
+                    'It replaces symbolic reasoning with neural network approximations'
+                ],
+                correct: 1,
+                explanation: 'KAPING addresses the hallucination problem by retrieving relevant facts from a structured Knowledge Graph and adding them to the user\'s input before sending it to the LLM. This provides grounding in verified, structured knowledge rather than relying solely on the LLM\'s probabilistic text generation. The LLM still generates the response, but with factual anchors from the KG. This is different from fine-tuning or embedding—it\'s a retrieval-augmented approach that keeps the KG and LLM separate but synergistic.'
+            },
+            {
+                id: 11,
+                type: 'deep-reasoning',
+                question: 'Consider: Parent ≡ (hasChild some Person) ⊓ (hasChild only Person). Why is this definition redundant, and what would be a more precise formulation?',
+                options: [
+                    'It\'s not redundant—both constraints are necessary for correctness',
+                    '"only Person" is redundant because "some Person" already implies all children are Persons',
+                    'The definition should use ⊔ (union) instead of ⊓ (intersection)',
+                    '"some Person" is sufficient alone; "only Person" adds no value if domain/range are defined'
+                ],
+                correct: 3,
+                explanation: 'If hasChild has domain=Person and range=Person (which is typical), then "only Person" is automatically satisfied—you can\'t have children that aren\'t Persons by the property definition itself. The "some Person" existential is doing the real work: ensuring the individual has at least one child. The "only Person" is logically redundant. A cleaner definition: Parent ≡ hasChild some Person. This highlights the importance of understanding how property domain/range constraints interact with class restrictions.'
+            },
+            {
+                id: 12,
+                type: 'real-world',
+                question: 'A pharmaceutical company models drug interactions in OWL. Drug A interactsNegativelyWith Drug B. If interactsNegativelyWith is symmetric, what must the reasoner infer?',
+                options: [
+                    'Drug B interactsNegativelyWith Drug A',
+                    'Drug A and Drug B cannot be co-administered',
+                    'A new individual representing the interaction must be created',
+                    'Nothing—symmetric properties only apply to individuals, not classes'
+                ],
+                correct: 0,
+                explanation: 'Symmetry is a property characteristic that creates automatic bidirectional inference. If P is symmetric and P(a,b) is asserted, then P(b,a) is AUTOMATICALLY inferred by the reasoner. This is perfect for modeling mutual relationships like "marriedTo", "siblingOf", or in this case "interactsNegativelyWith". The reasoner will infer Drug B interactsNegativelyWith Drug A without needing explicit assertion. This demonstrates how property characteristics enable efficient knowledge representation—you state facts once, the reasoner handles logical consequences.'
+            },
+            {
+                id: 13,
+                type: 'advanced',
+                question: 'In Protégé, you notice a class is highlighted in YELLOW during classification. What does this indicate?',
+                options: [
+                    'The class definition contains a syntax error',
+                    'The class is logically equivalent to another class in the ontology',
+                    'The class is unsatisfiable (inconsistent)',
+                    'The class has no asserted individuals'
+                ],
+                correct: 1,
+                explanation: 'Yellow highlighting in Protégé indicates EQUIVALENT CLASSES—two or more classes that have logically identical definitions. This often reveals unintended redundancy. For example, if you define "Mother ≡ Female ⊓ Parent" and separately "FemaleParent ≡ Female ⊓ Parent", Protégé will classify them as equivalent and highlight both in yellow. This isn\'t an error, but it suggests you may want to remove one definition. RED highlighting indicates unsatisfiable classes (inconsistencies), which is a more serious issue.'
+            },
+            {
+                id: 14,
+                type: 'inference',
+                question: 'Given: Manager ⊑ Employee, and hasBoss has domain=Employee, range=Manager. If you assert hasBoss(John, Sarah), what does the reasoner infer?',
+                options: [
+                    'John is an Employee, Sarah is a Manager',
+                    'Sarah is an Employee (but not necessarily a Manager)',
+                    'Nothing can be inferred without additional axioms',
+                    'John and Sarah must be instances of the same class'
+                ],
+                correct: 0,
+                explanation: 'Domain and range create automatic type inference! Domain=Employee means: if hasBoss(x,y), then x MUST be an Employee. Range=Manager means: if hasBoss(x,y), then y MUST be a Manager. Since Manager ⊑ Employee, Sarah is BOTH a Manager and an Employee (due to subsumption). This demonstrates the power of property constraints for automatic classification—simply asserting relationships can classify individuals without explicit type declarations. This is core to OWL\'s inference capabilities.'
+            },
+            {
+                id: 15,
+                type: 'practical',
+                question: 'You are building a recipe ontology. Which OWL construct is most appropriate for representing "Margherita Pizza must have exactly 1 base, at least 1 cheese, and only vegetarian toppings"?',
+                options: [
+                    'Three separate SubClassOf axioms with qualified cardinality and universal restrictions',
+                    'A single EquivalentTo axiom with intersection of all constraints',
+                    'SWRL rules for each constraint',
+                    'Multiple disjoint class assertions'
+                ],
+                correct: 0,
+                explanation: 'Use SubClassOf axioms for DEFINING CONSTRAINTS on a class: (1) MargheritaPizza ⊑ hasBase exactly 1 Base (2) MargheritaPizza ⊑ hasCheese min 1 Cheese (3) MargheritaPizza ⊑ hasTopping only VegetarianTopping. EquivalentTo would make this a COMPLETE DEFINITION, meaning anything satisfying these constraints would automatically be classified as MargheritaPizza—usually not desired for specific dishes. SubClassOf says "all Margheritas must satisfy this," while EquivalentTo says "anything satisfying this IS a Margherita." This distinction is crucial in practical ontology design.'
+            }
+        ];
+
+        // State
+        let currentQuestion = 0;
+        let answers = {};
+        let showResults = false;
+        let showExplanation = {};
+
+        // Render functions
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (showResults) {
+                app.innerHTML = renderResults();
+                attachReviewEventListeners();
+            } else {
+                app.innerHTML = renderQuiz();
+                attachEventListeners();
+            }
+        }
+
+        function renderQuiz() {
+            const q = questions[currentQuestion];
+            const progress = ((Object.keys(answers).length / questions.length) * 100).toFixed(0);
+            const isAnswered = answers[q.id] !== undefined;
+            const selectedAnswer = answers[q.id];
+
+            return `
+                <div class="quiz-card">
+                    <div class="header">
+                        <div class="header-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+                                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+                            </svg>
+                        </div>
+                        <h1>Advanced OWL Quiz</h1>
+                        <p>Test your understanding of Web Ontology Language concepts</p>
+                    </div>
+
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${progress}%"></div>
+                    </div>
+
+                    <div class="question-header">
+                        <div class="question-meta">
+                            <span class="question-number">Question ${currentQuestion + 1} of ${questions.length}</span>
+                            <span class="question-type">${q.type.replace('-', ' ')}</span>
+                        </div>
+                        <div class="question-text">${q.question}</div>
+                    </div>
+
+                    <div class="options">
+                        ${q.options.map((option, idx) => {
+                            const isSelected = selectedAnswer === idx;
+                            const optionClass = isSelected ? 'option selected' : 'option';
+                            const letter = String.fromCharCode(65 + idx);
+                            
+                            return `
+                                <div class="${optionClass}" onclick="selectAnswer(${q.id}, ${idx})">
+                                    <div class="option-header">
+                                        <div class="option-indicator">${letter}</div>
+                                        <div class="option-text">${option}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    ${isAnswered && showExplanation[q.id] ? `
+                        <div class="explanation">
+                            <div class="explanation-header">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4"/>
+                                    <path d="M12 8h.01"/>
+                                </svg>
+                                Explanation
+                            </div>
+                            <div class="explanation-text">${q.explanation}</div>
+                        </div>
+                    ` : ''}
+
+                    ${isAnswered ? `
+                        <div style="margin-top: 1rem; text-align: center;">
+                            <button class="btn btn-secondary" onclick="toggleExplanation(${q.id})" style="display: inline-flex;">
+                                ${showExplanation[q.id] ? 'Hide' : 'Show'} Explanation
+                            </button>
+                        </div>
+                    ` : ''}
+
+                    <div class="navigation">
+                        <button 
+                            class="btn ${currentQuestion === 0 ? 'btn-disabled' : 'btn-secondary'}"
+                            onclick="previousQuestion()"
+                            ${currentQuestion === 0 ? 'disabled' : ''}
+                        >
+                            ← Previous
+                        </button>
+
+                        ${currentQuestion === questions.length - 1 ? `
+                            <button 
+                                class="btn ${Object.keys(answers).length === questions.length ? 'btn-success' : 'btn-disabled'}"
+                                onclick="submitQuiz()"
+                                ${Object.keys(answers).length !== questions.length ? 'disabled' : ''}
+                            >
+                                Submit Quiz
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="8" r="6"/>
+                                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                                </svg>
+                            </button>
+                        ` : `
+                            <button class="btn btn-primary" onclick="nextQuestion()">
+                                Next
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6"/>
+                                </svg>
+                            </button>
+                        `}
+                    </div>
+
+                    <div class="question-dots">
+                        ${questions.map((q, idx) => {
+                            const isAnswered = answers[q.id] !== undefined;
+                            const isCurrent = idx === currentQuestion;
+                            const dotClass = isAnswered ? 'dot answered' : isCurrent ? 'dot current' : 'dot unanswered';
+                            
+                            return `<div class="${dotClass}" onclick="goToQuestion(${idx})"></div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            const correctCount = Object.keys(answers).filter(qId => {
+                const q = questions.find(question => question.id === parseInt(qId));
+                return answers[qId] === q.correct;
+            }).length;
+
+            const percentage = ((correctCount / questions.length) * 100).toFixed(0);
+            const incorrectCount = questions.length - correctCount;
+
+            let message = '';
+            if (percentage >= 90) {
+                message = '🎉 Outstanding! You have mastered Advanced OWL!';
+            } else if (percentage >= 75) {
+                message = '👏 Great job! Solid understanding of OWL concepts!';
+            } else if (percentage >= 60) {
+                message = '👍 Good work! Review the explanations to strengthen your knowledge.';
+            } else {
+                message = '📚 Keep learning! Review the material and try again.';
+            }
+
+            return `
+                <div class="quiz-card">
+                    <div class="results-container">
+                        <div class="header-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="6"/>
+                                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+                            </svg>
+                        </div>
+                        <div class="results-score">${percentage}%</div>
+                        <div class="results-message">${message}</div>
+
+                        <div class="results-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Total Questions</span>
+                                <span class="breakdown-value">${questions.length}</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Correct Answers</span>
+                                <span class="breakdown-value" style="color: #10b981;">${correctCount}</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Incorrect Answers</span>
+                                <span class="breakdown-value" style="color: #ef4444;">${incorrectCount}</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Score</span>
+                                <span class="breakdown-value">${percentage}%</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="restartQuiz()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                                <path d="M21 3v5h-5"/>
+                            </svg>
+                            Retake Quiz
+                        </button>
+                    </div>
+
+                    <div class="review-section">
+                        <h2 style="text-align: center; margin-bottom: 2rem; color: #1e293b;">Review Your Answers</h2>
+                        ${questions.map((q, idx) => {
+                            const userAnswer = answers[q.id];
+                            const isCorrect = userAnswer === q.correct;
+                            
+                            return `
+                                <div class="review-question">
+                                    <div class="review-header">
+                                        <div class="review-status ${isCorrect ? 'correct' : 'incorrect'}">
+                                            ${isCorrect ? '✓' : '✗'}
+                                        </div>
+                                        <div class="review-question-text">
+                                            ${idx + 1}. ${q.question}
+                                        </div>
+                                    </div>
+                                    <div class="review-answer">
+                                        <div class="review-answer-label">Your answer:</div>
+                                        <div class="review-answer-text" style="color: ${isCorrect ? '#10b981' : '#ef4444'};">
+                                            ${q.options[userAnswer]}
+                                        </div>
+                                    </div>
+                                    ${!isCorrect ? `
+                                        <div class="review-answer">
+                                            <div class="review-answer-label">Correct answer:</div>
+                                            <div class="review-answer-text" style="color: #10b981;">
+                                                ${q.options[q.correct]}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    <div class="explanation" style="margin-top: 1rem;">
+                                        <div class="explanation-header">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <path d="M12 16v-4"/>
+                                                <path d="M12 8h.01"/>
+                                            </svg>
+                                            Explanation
+                                        </div>
+                                        <div class="explanation-text">${q.explanation}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event handlers
+        function selectAnswer(questionId, answerIndex) {
+            answers[questionId] = answerIndex;
+            render();
+        }
+
+        function toggleExplanation(questionId) {
+            showExplanation[questionId] = !showExplanation[questionId];
+            render();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                render();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                render();
+            }
+        }
+
+        function goToQuestion(index) {
+            currentQuestion = index;
+            render();
+        }
+
+        function submitQuiz() {
+            showResults = true;
+            render();
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            showResults = false;
+            showExplanation = {};
+            render();
+        }
+
+        function attachEventListeners() {
+            // Event listeners are attached via onclick in the HTML
+        }
+
+        function attachReviewEventListeners() {
+            // Event listeners are attached via onclick in the HTML
+        }
+
+        // Initialize
+        render();
+    </script>
+</body>
+</html>
