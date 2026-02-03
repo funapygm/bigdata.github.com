@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Week 1 Interactive Quiz</title>
+  <style>
+    :root {
+      --bg1: #0b1020;
+      --bg2: #1b0f2a;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(0,0,0,0.25);
+      --border: rgba(168,85,247,0.35);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --muted2: rgba(255,255,255,0.55);
+      --good: #22c55e;
+      --bad: #ef4444;
+      --accent: #a855f7;
+      --accent2: #6366f1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(168,85,247,0.35), transparent 60%),
+                  radial-gradient(900px 700px at 80% 20%, rgba(99,102,241,0.25), transparent 55%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg1));
+      min-height: 100vh;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .wrap { width: 100%; max-width: 980px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
+    }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: 26px; }
+    .muted { color: var(--muted); }
+    .muted2 { color: var(--muted2); }
+    .pill {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.20);
+      color: var(--muted);
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .stats { display:flex; gap:10px; flex-wrap: wrap; }
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      transition: width 200ms ease;
+    }
+    .grid { display:grid; grid-template-columns: 1.25fr 0.75fr; gap: 16px; margin-top: 16px; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .panel h3 { font-size: 15px; margin-bottom: 10px; color: rgba(255,255,255,0.88); }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      color: rgba(255,255,255,0.88);
+    }
+    .qtext {
+      font-size: 18px;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.25);
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+    }
+    .input:focus { border-color: rgba(168,85,247,0.7); box-shadow: 0 0 0 4px rgba(168,85,247,0.18); }
+    .btnrow { display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    button {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+      user-select: none;
+    }
+    button:hover { transform: translateY(-1px); background: rgba(0,0,0,0.28); border-color: rgba(255,255,255,0.22); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .primary {
+      background: linear-gradient(90deg, rgba(168,85,247,0.30), rgba(99,102,241,0.25));
+      border-color: rgba(168,85,247,0.55);
+    }
+    .danger {
+      border-color: rgba(239,68,68,0.55);
+      background: rgba(239,68,68,0.10);
+    }
+    .ok {
+      border-color: rgba(34,197,94,0.55);
+      background: rgba(34,197,94,0.10);
+    }
+    .feedback {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.88);
+    }
+    .footer {
+      margin-top: 14px;
+      display:flex;
+      gap:12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .big {
+      font-size: 42px;
+      line-height: 1;
+      margin: 10px 0 0 0;
+    }
+    .center { text-align:center; }
+    a { color: rgba(168,85,247,0.95); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="app"></div>
+    <p class="muted2" style="margin:10px 2px 0 2px; font-size:12px;">
+      Tip: press <b>Enter</b> to check, then <b>Enter</b> again to go next.
+    </p>
+  </div>
+
+<script>
+/** Quiz data (ported from the React .jsx) */
+const sections = [
+    {
+      title: "🧠 DIKW Pyramid & Big Data Fundamentals",
+      questions: [
+        {
+          example: {
+            title: "The DIKW Pyramid Hierarchy",
+            content: `The DIKW Pyramid (Ackoff 1989) represents the hierarchy of understanding:
+
+📊 DATA → Raw, unorganized facts (temperature: 25, price: 100)
+📋 INFORMATION → Data in context (Monthly sales: $50,000)
+🧠 KNOWLEDGE → Patterns and principles (How to increase sales)
+💎 WISDOM → Understanding WHY and making best decisions
+
+Key insight: Traditional CS handles Data→Information. 
+Semantic Web handles Information→Knowledge→Decision.`,
+          },
+          question: "In the DIKW pyramid, what transforms DATA into INFORMATION?",
+          answer: "processing",
+          acceptableAnswers: ["processing", "data processing", "context", "putting in context"],
+          hint: "Think about what we do to raw data to make it interpretable",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "The 5 V's of Big Data",
+            content: `Big Data is characterized by 5 V's:
+
+1. VOLUME → Large amounts (size) - Which storage techniques?
+2. VELOCITY → Fast collection rate - What speed of processing?
+3. VARIETY → Structured/semi-structured/unstructured - What formatting?
+4. VERACITY → Authenticity, provenance, accountability - How to authenticate?
+5. VALUE → Meanings and insights - Which capacity to derive actions?
+
+Remember: 2 Zettabytes in 2010 → 74 Zettabytes in 2021 → projected 2500 Zettabytes by 2030!`,
+          },
+          question: "Which V of Big Data addresses the question 'How do we authenticate data?'",
+          answer: "veracity",
+          acceptableAnswers: ["veracity", "v for veracity"],
+          hint: "This V relates to authenticity, provenance, and accountability",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "Open World vs Closed World Assumption",
+            content: `Two fundamental reasoning assumptions in knowledge systems:
+
+CLOSED WORLD ASSUMPTION (CWA):
+- Everything not stated is FALSE
+- Used in relational databases
+- Example: If "John is mortal" is not in DB → John is NOT mortal
+
+OPEN WORLD ASSUMPTION (OWA):
+- Everything not stated is UNKNOWN
+- Used in Semantic Web/RDF
+- Example: If "John is mortal" is not stated → We don't know if John is mortal
+
+Semantic Web uses OWA because we can't assume complete knowledge!`,
+          },
+          question: "The Semantic Web uses which assumption: 'open world' or 'closed world'?",
+          answer: "open world",
+          acceptableAnswers: ["open world", "open world assumption", "owa", "open"],
+          hint: "The web can never have complete knowledge about everything",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Data Science vs Statistics",
+            content: `Key differences:
+
+STATISTICS:
+- Mathematical models to understand systems
+- Focus on population characteristics
+- Emphasizing uncertainty: REQUIREMENT
+- Evaluation: Same dataset (R², residual analysis)
+
+DATA SCIENCE/MACHINE LEARNING:
+- Engineering heuristics to find solutions
+- Focus on individual characteristics
+- Emphasizing uncertainty: Optional
+- Evaluation: Split data (cross-validation)
+
+Data Science creates PREDICTIVE MODELS from large historical data!`,
+          },
+          question: "In traditional statistics, emphasizing uncertainty is a _________ (requirement/optional)?",
+          answer: "requirement",
+          acceptableAnswers: ["requirement", "required", "mandatory"],
+          hint: "Statistics is more rigorous about acknowledging what we don't know",
+          difficulty: "Hard",
+          points: 15,
+        },
+      ],
+    },
+    {
+      title: "🌐 Knowledge Graphs & Linked Data",
+      questions: [
+        {
+          example: {
+            title: "What is a Knowledge Graph?",
+            content: `A Knowledge Graph is a knowledge base in GRAPH form:
+
+COMPONENTS:
+- Nodes (vertices) = Entities/Resources (identified by IRIs)
+- Edges = Relationships/Properties (also identified by IRIs)
+- Labels = Describe nodes and edges
+
+TYPES OF NODES:
+- Resource nodes (have IRIs) → Can be linked to other data
+- Literal nodes (values) → Text, numbers, dates (no IRI)
+
+Example: 
+[Bob] --knows--> [Alice]
+[Bob] --birthDate--> "1990-07-04"
+
+Bob and Alice are RESOURCES. "1990-07-04" is a LITERAL.`,
+          },
+          question: "In a knowledge graph, a node that contains a value like '1990-07-04' without an IRI is called a _______?",
+          answer: "literal",
+          acceptableAnswers: ["literal", "rdf literal", "literal node", "data value"],
+          hint: "It's the opposite of a resource - just a raw value",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Tim Berners-Lee's 4 Linked Data Principles",
+            content: `The inventor of the WWW defined these principles for Linked Data:
+
+1. Use IRIs to uniquely identify things (entities)
+2. Use HTTP IRIs to resolve IDs (so you can look them up)
+3. Provide data through content negotiation:
+   - HTML for humans
+   - RDF for machines
+4. Link to other entities (data reuse)
+
+These principles enable the "Web of Data" - where data is connected
+like web pages are connected through hyperlinks!`,
+          },
+          question: "According to Linked Data principles, what format should be provided for machines (not humans)?",
+          answer: "rdf",
+          acceptableAnswers: ["rdf", "resource description framework", "rdf format"],
+          hint: "Humans get HTML, machines get ___",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "5-Star Linked Open Data Scheme",
+            content: `Tim Berners-Lee's quality rating for open data:
+
+⭐ (1 star): Data online, any format, open license
+⭐⭐ (2 stars): Machine-readable structured data (e.g., Excel)
+⭐⭐⭐ (3 stars): Open format (e.g., CSV - no proprietary software needed)
+⭐⭐⭐⭐ (4 stars): Uses IRIs and RDF (can query with SPARQL)
+⭐⭐⭐⭐⭐ (5 stars): Linked to other data (full Linked Open Data)
+
+Key progression:
+PDF → XLS → CSV → RDF → LOD (Linked Open Data)`,
+          },
+          question: "How many stars does data get if it uses IRIs and RDF but is NOT linked to other data?",
+          answer: "4",
+          acceptableAnswers: ["4", "four", "4 stars", "four stars", "****"],
+          hint: "Linking adds the final star",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Major Knowledge Graphs",
+            content: `Real-world Knowledge Graphs:
+
+GOOGLE KNOWLEDGE GRAPH:
+- 500 billion facts about 5 billion entities
+- Limited API access, proprietary
+- Powers Google Search info panels
+
+WIKIDATA:
+- 71+ million facts
+- Free API, SPARQL queries, downloadable
+- Creative Commons Zero license
+- Community curated
+
+OTHER EXAMPLES:
+- DBpedia (Wikipedia-derived)
+- Microsoft Satori
+- Facebook's Social Graph
+- Amazon Information Graph`,
+          },
+          question: "Which major knowledge graph uses Creative Commons Zero license and is community curated?",
+          answer: "wikidata",
+          acceptableAnswers: ["wikidata", "wiki data"],
+          hint: "It's the open-source alternative to Google's Knowledge Graph",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "Semantic Web vs Syntactic Web",
+            content: `The fundamental difference:
+
+SYNTACTIC WEB (Current Web):
+- Web of DOCUMENTS
+- Links are generic (just "Link")
+- Machines can display but not UNDERSTAND
+- Human readable only
+
+SEMANTIC WEB (Web of Data):
+- Web of THINGS (concepts, entities)
+- Links are LABELED (hasAuthor, worksAt, knows)
+- Machines can understand MEANING
+- Both human and machine readable
+
+Key: The Semantic Web adds METADATA to make meaning EXPLICIT!`,
+          },
+          question: "The Semantic Web is about _______ (documents/things)?",
+          answer: "things",
+          acceptableAnswers: ["things", "entities", "concepts", "resources"],
+          hint: "The syntactic web is about documents, the semantic web is about...",
+          difficulty: "Easy",
+          points: 5,
+        },
+      ],
+    },
+    {
+      title: "📝 RDF Fundamentals & Triples",
+      questions: [
+        {
+          example: {
+            title: "The RDF Triple Structure",
+            content: `RDF (Resource Description Framework) uses TRIPLES:
+
+(Subject, Predicate, Object) or (s, p, o)
+
+SUBJECT: The resource being described (always an IRI)
+PREDICATE: The property/relationship (always an IRI)  
+OBJECT: Can be IRI (resource) OR literal (value)
+
+Example Triple:
+<http://example.org/bob> <http://xmlns.com/foaf/0.1/knows> <http://example.org/alice>
+
+In English: "Bob knows Alice"
+
+Subject: Bob (IRI)
+Predicate: knows (IRI)
+Object: Alice (IRI - another resource)`,
+          },
+          question: "In an RDF triple (s, p, o), what can NEVER be a literal - only an IRI?",
+          answer: "predicate",
+          acceptableAnswers: ["predicate", "the predicate", "p", "property", "predicate and subject", "subject and predicate"],
+          hint: "Objects can be literals, but which parts must always be IRIs?",
+          difficulty: "Hard",
+          points: 15,
+        },
+        {
+          example: {
+            title: "RDF Namespaces and Prefixes",
+            content: `Namespaces prevent naming collisions and shorten IRIs:
+
+FULL IRI:
+<http://xmlns.com/foaf/0.1/knows>
+
+WITH PREFIX:
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+foaf:knows
+
+COMMON NAMESPACES:
+- rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+- rdfs: http://www.w3.org/2000/01/rdf-schema#
+- owl: http://www.w3.org/2002/07/owl#
+- foaf: http://xmlns.com/foaf/0.1/
+- dcterms: http://purl.org/dc/terms/
+- xsd: http://www.w3.org/2001/XMLSchema#
+
+Lookup namespaces at: http://prefix.cc/`,
+          },
+          question: "What namespace prefix is commonly used for 'Friend of a Friend' vocabulary?",
+          answer: "foaf",
+          acceptableAnswers: ["foaf", "foaf:"],
+          hint: "Friend of a Friend = F.O.A.F.",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "RDF vs XML vs HTML",
+            content: `Three different markup approaches:
+
+HTML: Tells computer HOW to display text
+<p><b>HTML</b> merely tells the computer how to present text</p>
+→ No understanding of meaning
+
+XML: Encodes information in user-defined tags
+<name><given>Ken</given><family>McLeod</family></name>
+→ Structure exists, but no built-in way to share meaning
+
+RDF: Provides relationships that computers can interpret
+→ Enables INFERENCE and REASONING
+→ Machine can understand "Bob knows Alice" means a relationship
+
+KEY: RDF adds semantics (meaning) that XML lacks!`,
+          },
+          question: "Which format allows computers to perform INFERENCE - RDF, XML, or HTML?",
+          answer: "rdf",
+          acceptableAnswers: ["rdf", "resource description framework"],
+          hint: "Only one of these provides relationships for reasoning",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "Typed Literals in RDF",
+            content: `Literals can have datatypes using ^^ notation:
+
+PLAIN LITERAL:
+"Mona Lisa"
+
+TYPED LITERAL:
+"1990-07-04"^^xsd:date
+"25"^^xsd:integer
+"3.14"^^xsd:decimal
+
+LANGUAGE-TAGGED LITERAL:
+"Hello"@en
+"Bonjour"@fr
+
+Common XSD datatypes:
+- xsd:string, xsd:integer, xsd:decimal
+- xsd:date, xsd:dateTime
+- xsd:boolean`,
+          },
+          question: "What syntax is used to specify a datatype for a literal in RDF? (Use the symbol)",
+          answer: "^^",
+          acceptableAnswers: ["^^", "caret caret", "double caret"],
+          hint: "Two of the same character that looks like an arrow pointing up",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "RDF Compared to Object Model",
+            content: `Mapping RDF to Object-Oriented concepts:
+
+OOP CONCEPT     →    RDF CONCEPT
+Object          →    Resource
+Class           →    rdf:type / rdfs:Class
+Attribute       →    Property
+Attribute Value →    Object (Resource or Literal)
+Instance        →    Individual
+
+Example:
+In OOP: person.name = "Bob"
+In RDF: <person> <hasName> "Bob"
+
+Key difference: RDF is SCHEMA-FREE!
+You can mix vocabularies from different sources.`,
+          },
+          question: "In RDF terms, what is an OOP 'Object' equivalent to?",
+          answer: "resource",
+          acceptableAnswers: ["resource", "rdf resource", "a resource"],
+          hint: "It's identified by an IRI in RDF",
+          difficulty: "Medium",
+          points: 10,
+        },
+      ],
+    },
+    {
+      title: "🐢 Turtle Syntax Mastery",
+      questions: [
+        {
+          example: {
+            title: "Turtle Syntax Basics",
+            content: `Turtle (Terse RDF Triple Language) is human-readable RDF:
+
+PREFIXES:
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>   (SPARQL style)
+
+TRIPLE (ends with period):
+ex:bob foaf:knows ex:alice .
+
+MULTIPLE PREDICATES (semicolon):
+ex:bob foaf:knows ex:alice ;
+       foaf:name "Bob" .
+
+MULTIPLE OBJECTS (comma):
+ex:bob foaf:knows ex:alice , ex:carol .
+
+SHORTHAND for rdf:type:
+ex:bob a foaf:Person .
+(same as: ex:bob rdf:type foaf:Person .)`,
+          },
+          question: "In Turtle syntax, what single character is shorthand for rdf:type?",
+          answer: "a",
+          acceptableAnswers: ["a", "'a'", "the letter a"],
+          hint: "Think of 'Bob IS A Person'",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "Turtle Punctuation Rules",
+            content: `Critical punctuation in Turtle:
+
+PERIOD (.) → End of statement (new subject)
+ex:bob foaf:knows ex:alice .
+ex:carol foaf:knows ex:dave .
+
+SEMICOLON (;) → Same subject, new predicate
+ex:bob foaf:knows ex:alice ;
+       foaf:age "30" .
+
+COMMA (,) → Same subject AND predicate, new object
+ex:bob foaf:knows ex:alice , ex:carol , ex:dave .
+
+This is equivalent to THREE separate triples!
+
+Common mistake: Forgetting the final period!`,
+          },
+          question: "In Turtle, what punctuation means 'same subject, different predicate'?",
+          answer: ";",
+          acceptableAnswers: [";", "semicolon", "semi-colon", "semi colon"],
+          hint: "It's between period (new subject) and comma (same predicate)",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Complete Turtle Example",
+            content: `Here's a complete Turtle document:
+
+@prefix ex: <http://example.org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:bob a foaf:Person ;
+    foaf:name "Bob Smith" ;
+    foaf:knows ex:alice ;
+    foaf:birthDate "1990-07-04"^^xsd:date .
+
+ex:alice a foaf:Person ;
+    foaf:name "Alice Jones" .
+
+This creates 6 triples total:
+1. ex:bob rdf:type foaf:Person
+2. ex:bob foaf:name "Bob Smith"
+3. ex:bob foaf:knows ex:alice
+4. ex:bob foaf:birthDate "1990-07-04"
+5. ex:alice rdf:type foaf:Person
+6. ex:alice foaf:name "Alice Jones"`,
+          },
+          question: "Write a Turtle triple stating that ex:john knows ex:mary (use proper syntax with period)",
+          answer: "ex:john foaf:knows ex:mary .",
+          acceptableAnswers: [
+            "ex:john foaf:knows ex:mary .",
+            "ex:john foaf:knows ex:mary.",
+            "<http://example.org/john> <http://xmlns.com/foaf/0.1/knows> <http://example.org/mary> .",
+          ],
+          hint: "subject predicate object period",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Blank Nodes in Turtle",
+            content: `Sometimes we need nodes without global identifiers:
+
+BLANK NODE SYNTAX:
+_:node1 foaf:knows ex:alice .
+
+OR ANONYMOUS (inline):
+ex:bob foaf:knows [ foaf:name "Anonymous" ] .
+
+This creates a node with no IRI - only used locally.
+
+Why use blank nodes?
+- Intermediate nodes in n-ary relationships
+- When you don't need to reference something externally
+- Anonymous/unknown entities
+
+Example - modeling a purchase:
+ex:sale1 ex:seller ex:adam ;
+         ex:buyer [ a ex:Person ; foaf:name "Unknown" ] .`,
+          },
+          question: "What prefix is used for blank nodes in N-Triples/Turtle format?",
+          answer: "_:",
+          acceptableAnswers: ["_:", "_", "underscore colon", "underscore:"],
+          hint: "It starts with an underscore",
+          difficulty: "Hard",
+          points: 15,
+        },
+        {
+          example: {
+            title: "Turtle vs Other Formats",
+            content: `RDF Serialization formats compared:
+
+N-TRIPLES:
+- One triple per line, full IRIs
+- Good for bulk loading
+- No namespaces
+<http://ex.org/bob> <http://foaf/knows> <http://ex.org/alice> .
+
+TURTLE:
+- Human readable, supports prefixes
+- Uses ; and , shortcuts
+ex:bob foaf:knows ex:alice .
+
+TRIG:
+- Turtle + Named Graphs
+GRAPH <http://example.org/graph1> { ... }
+
+RDF/XML:
+- XML-based, original standard
+- Verbose but XML-tool compatible
+
+JSON-LD:
+- JSON-based, web-friendly
+- Favored by Google for web markup`,
+          },
+          question: "Which RDF format extends Turtle to support named graphs?",
+          answer: "trig",
+          acceptableAnswers: ["trig", "tri-g"],
+          hint: "It's Turtle for Graphs - TRI + G",
+          difficulty: "Medium",
+          points: 10,
+        },
+      ],
+    },
+    {
+      title: "🔗 Advanced RDF Concepts",
+      questions: [
+        {
+          example: {
+            title: "Reification - Statements about Statements",
+            content: `Problem: How do we say WHO made a statement?
+
+"Frankh stated that the building is in Amsterdam"
+
+REIFICATION creates a statement ABOUT a statement:
+
+:statement1 a rdf:Statement ;
+    rdf:subject :building ;
+    rdf:predicate :location ;
+    rdf:object :amsterdam ;
+    dc:creator :frankh .
+
+This quadruples the size! (4 triples for 1 statement)
+
+Alternative: NAMED GRAPHS
+GRAPH :graph1 {
+    :building :location :amsterdam .
+}
+:graph1 dc:creator :frankh .`,
+          },
+          question: "Reification multiplies storage by how many times (one statement becomes how many triples)?",
+          answer: "4",
+          acceptableAnswers: ["4", "four", "quadruple", "4 times"],
+          hint: "Subject, predicate, object, plus the type declaration",
+          difficulty: "Hard",
+          points: 15,
+        },
+        {
+          example: {
+            title: "N-ary Relationships in RDF",
+            content: `RDF only supports BINARY predicates (2 things).
+How do we model: "Adam sold to Ali with Carole as broker"?
+
+Solution: Create an INTERMEDIATE RESOURCE:
+
+:sale1 a :SaleTransaction ;
+    :seller :adam ;
+    :buyer :ali ;
+    :broker :carole ;
+    :date "2024-01-15"^^xsd:date ;
+    :amount "50000"^^xsd:decimal .
+
+The sale event becomes a NODE connecting all parties.
+
+This pattern is used for:
+- Events with multiple participants
+- Relationships with attributes (price, date)
+- Provenance information`,
+          },
+          question: "To model n-ary relationships in RDF, we create an _________ resource/node?",
+          answer: "intermediate",
+          acceptableAnswers: ["intermediate", "auxiliary", "intermediary", "connecting", "intermediate resource"],
+          hint: "A node in the middle that connects all the related things",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Graph Integration in RDF",
+            content: `How do two RDF graphs merge?
+
+RULE: Same IRI = Same Node
+
+Graph 1:
+ex:bob foaf:knows ex:alice .
+ex:bob foaf:age "30" .
+
+Graph 2:  
+ex:bob foaf:worksWith ex:carol .
+wd:Q12418 dc:title "Mona Lisa" .
+
+MERGED GRAPH:
+- ex:bob node gains ALL properties from both graphs
+- wd:Q12418 remains separate (different IRI)
+
+This is why GLOBAL IRIs are crucial!
+Using the same IRI (like wd:Q12418 from Wikidata)
+allows automatic integration across datasets.`,
+          },
+          question: "In RDF graph merging, nodes are considered identical if they have the same _____?",
+          answer: "iri",
+          acceptableAnswers: ["iri", "uri", "identifier", "iri/uri", "same iri"],
+          hint: "The unique identifier that resources use",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "Named Graphs",
+            content: `Named Graphs group triples with an identifier:
+
+@prefix ex: <http://example.org/> .
+
+GRAPH ex:graph1 {
+    ex:bob foaf:knows ex:alice .
+    ex:bob foaf:age "30" .
+}
+
+GRAPH ex:graph2 {
+    ex:carol foaf:knows ex:dave .
+}
+
+# Metadata about the graphs:
+ex:graph1 dc:creator ex:frankh ;
+          dc:date "2024-01-01" .
+
+Uses:
+- Track provenance (who said what)
+- Organize data by source
+- Access control
+- Versioning`,
+          },
+          question: "N-Quads extends N-Triples by adding what fourth element?",
+          answer: "graph",
+          acceptableAnswers: ["graph", "graph iri", "named graph", "graph identifier", "context"],
+          hint: "It goes from 3 parts (triple) to 4 parts (quad) by adding...",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "IRI vs URI vs URL vs URN",
+            content: `Understanding identifier schemes:
+
+URI (Uniform Resource Identifier):
+- The general concept
+- Includes both URLs and URNs
+
+URL (Uniform Resource Locator):
+- Points to a LOCATION
+- https://google.com
+
+URN (Uniform Resource Name):
+- A NAME/identifier (not location)
+- urn:isbn:0-486-27557-4
+
+IRI (Internationalized Resource Identifier):
+- Extends URI with Unicode
+- Allows non-ASCII characters
+- http://例子.卷筒纸 (Chinese)
+
+CURIE (Compact URI):
+- Shortened form using prefixes
+- foaf:knows = http://xmlns.com/foaf/0.1/knows`,
+          },
+          question: "What is the term for a URI that supports international (Unicode) characters?",
+          answer: "iri",
+          acceptableAnswers: ["iri", "internationalized resource identifier"],
+          hint: "The 'I' stands for Internationalized",
+          difficulty: "Easy",
+          points: 5,
+        },
+      ],
+    },
+    {
+      title: "🧪 Ultimate Challenge Round",
+      questions: [
+        {
+          example: {
+            title: "Complex Turtle Parsing",
+            content: `Parse this Turtle and count the triples:
+
+@prefix ex: <http://example.org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+ex:john a foaf:Person ;
+    foaf:name "John" ;
+    foaf:knows ex:mary , ex:bob ;
+    foaf:age "25"^^xsd:integer .
+
+Count:
+1. ex:john a foaf:Person
+2. ex:john foaf:name "John"
+3. ex:john foaf:knows ex:mary
+4. ex:john foaf:knows ex:bob  (comma = same subject+predicate)
+5. ex:john foaf:age "25"
+
+Total: 5 triples`,
+          },
+          question: `How many triples in this Turtle?
+ex:alice a foaf:Person ;
+    foaf:knows ex:bob , ex:carol , ex:dave .`,
+          answer: "4",
+          acceptableAnswers: ["4", "four"],
+          hint: "One for rdf:type, three for knows (comma creates separate triples)",
+          difficulty: "Hard",
+          points: 15,
+        },
+        {
+          example: {
+            title: "Inference Example",
+            content: `Given these facts and rule:
+
+FACTS:
+1. ex:socrates rdf:type ex:Human .
+2. ex:Human rdfs:subClassOf ex:Mortal .
+
+RULE (from RDFS):
+If X is type A, and A subClassOf B, then X is type B
+
+INFERENCE:
+ex:socrates rdf:type ex:Mortal .
+
+This is AUTOMATIC with RDFS reasoning!
+
+Now, under OPEN WORLD ASSUMPTION:
+Q: Is Plato mortal?
+A: UNKNOWN (not false!) - we don't have info about Plato`,
+          },
+          question: "If we only know 'Socrates is Human' and 'All Humans are Mortal', is 'Plato is Mortal' true, false, or unknown under OWA?",
+          answer: "unknown",
+          acceptableAnswers: ["unknown", "we don't know", "cannot determine", "undetermined"],
+          hint: "Open World Assumption - what happens when we have no information?",
+          difficulty: "Hard",
+          points: 15,
+        },
+        {
+          example: {
+            title: "Building Knowledge Graphs",
+            content: `Steps to build a Knowledge Graph:
+
+1. ENTITY RECOGNITION
+   - Identify objects/individuals
+   - Disambiguate strings (is "Apple" fruit or company?)
+   
+2. RELATIONSHIP EXTRACTION
+   - Identify how entities connect
+   - Label the relationships
+
+Example from text:
+"John is a lecturer at Heriot-Watt who teaches Big Data"
+
+Entities: John, Lecturer, Heriot-Watt, Big Data
+Relationships:
+- John rdf:type Lecturer
+- John worksAt Heriot-Watt
+- John teaches BigData
+- BigData rdf:type Course`,
+          },
+          question: "The first step in knowledge graph construction is named _______ recognition?",
+          answer: "entity",
+          acceptableAnswers: ["entity", "named entity", "ner", "entity recognition"],
+          hint: "Finding and identifying the things/concepts in data",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "JSON-LD for Web Markup",
+            content: `JSON-LD embeds RDF in JSON for web pages:
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Movie",
+  "name": "Jason Bourne",
+  "actor": {
+    "@type": "Person",
+    "name": "Matt Damon",
+    "sameAs": "http://www.imdb.com/name/nm0000354/"
+  }
+}
+<\/script>
+
+Key JSON-LD keywords:
+@context - defines vocabulary
+@type - like rdf:type
+@id - the IRI of this resource
+sameAs - links to other representations
+
+Google uses JSON-LD for rich search results!`,
+          },
+          question: "In JSON-LD, what keyword is equivalent to rdf:type?",
+          answer: "@type",
+          acceptableAnswers: ["@type", "type", "@type"],
+          hint: "It starts with @ like other JSON-LD keywords",
+          difficulty: "Medium",
+          points: 10,
+        },
+        {
+          example: {
+            title: "Semantic Web Layer Cake",
+            content: `The W3C Semantic Web Stack (bottom to top):
+
+1. UNICODE + IRI (identification layer)
+2. XML + Namespaces (syntax layer)
+3. RDF + RDFS (data model layer)
+4. OWL (ontology layer)
+5. SPARQL (query layer)
+6. Rules/Logic (reasoning layer)
+7. Proof (verification layer)
+8. Trust (authentication layer)
+
+Key technologies:
+- SPARQL: Query language for RDF
+- OWL: Web Ontology Language
+- RDFS: RDF Schema (basic vocabulary)
+- SWRL: Semantic Web Rule Language`,
+          },
+          question: "What query language is used to retrieve data from RDF stores?",
+          answer: "sparql",
+          acceptableAnswers: ["sparql", "sparql query language"],
+          hint: "It's like SQL but for RDF triples",
+          difficulty: "Easy",
+          points: 5,
+        },
+        {
+          example: {
+            title: "Final Integration Test",
+            content: `Putting it all together:
+
+The Semantic Web transforms:
+- Web of Documents → Web of Data
+- Implicit meaning → Explicit metadata
+- Human-only readable → Machine processable
+
+Key equation:
+Linked Data = RDF + HTTP + IRIs + Links
+
+The goal: Enable machines to:
+1. Find data (via IRIs)
+2. Understand data (via RDF/OWL)
+3. Connect data (via links)
+4. Reason over data (via inference)
+
+Result: Intelligent agents that can answer complex
+questions by traversing the global knowledge graph!`,
+          },
+          question: "The Semantic Web transforms the web of documents into a web of _____?",
+          answer: "data",
+          acceptableAnswers: ["data", "things", "knowledge", "linked data"],
+          hint: "It's sometimes called the Web of ____",
+          difficulty: "Easy",
+          points: 5,
+        },
+      ],
+    },
+  ];
+
+function normalizeAnswer(ans) {
+  return String(ans || "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function sumPoints() {
+  return sections.reduce((accS, s) => accS + s.questions.reduce((accQ, q) => accQ + (q.points || 0), 0), 0);
+}
+
+function totalQuestions() {
+  return sections.reduce((acc, s) => acc + s.questions.length, 0);
+}
+
+function questionIndex(sectionIdx, questionIdx) {
+  let count = 0;
+  for (let i = 0; i < sectionIdx; i++) count += sections[i].questions.length;
+  return count + questionIdx; // 0-based
+}
+
+// App state
+const state = {
+  currentSection: 0,
+  currentQuestion: 0,
+  userAnswer: "",
+  feedback: null,      // {correct:boolean, message:string}
+  score: 0,
+  totalAttempted: 0,
+  streak: 0,
+  hintsUsed: 0,
+  phase: "study",
+  showHint: false,
+  completed: false,
+};
+
+function getCurrentQ() {
+  const s = sections[state.currentSection];
+  if (!s) return null;
+  return s.questions[state.currentQuestion] || null;
+}
+
+function checkAnswer() {
+  const q = getCurrentQ();
+  if (!q) return;
+  if (!state.userAnswer.trim()) return;
+
+  const normalizedUser = normalizeAnswer(state.userAnswer);
+  const acceptable = (q.acceptableAnswers || []).some(a => normalizeAnswer(a) === normalizedUser);
+
+  state.totalAttempted += 1;
+
+  if (acceptable) {
+    state.score += (q.points || 0);
+    state.streak += 1;
+    state.feedback = { correct: true, message: `✓ Correct! +${q.points || 0} points` };
+  } else {
+    state.streak = 0;
+    state.feedback = { correct: false, message: `✗ Not quite. The answer was: ${q.answer}` };
+  }
+
+  render();
+}
+
+function nextQuestion() {
+  state.userAnswer = "";
+  state.feedback = null;
+  state.phase = "study";
+  state.showHint = false;
+
+  const s = sections[state.currentSection];
+  if (state.currentQuestion < s.questions.length - 1) {
+    state.currentQuestion += 1;
+  } else if (state.currentSection < sections.length - 1) {
+    state.currentSection += 1;
+    state.currentQuestion = 0;
+  } else {
+    state.completed = true;
+  }
+  render();
+}
+
+function useHint() {
+  if (state.showHint) return;
+  state.showHint = true;
+  state.hintsUsed += 1;
+  render();
+}
+
+function restart() {
+  state.currentSection = 0;
+  state.currentQuestion = 0;
+  state.userAnswer = "";
+  state.feedback = null;
+  state.score = 0;
+  state.totalAttempted = 0;
+  state.streak = 0;
+  state.hintsUsed = 0;
+  state.phase = "study";
+  state.showHint = false;
+  state.completed = false;
+  render();
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function render() {
+  const app = document.getElementById("app");
+  const tq = totalQuestions();
+  const maxPts = sumPoints();
+
+  if (state.completed) {
+    const pct = maxPts > 0 ? Math.round((state.score / maxPts) * 100) : 0;
+    const attempted = state.totalAttempted;
+    app.innerHTML = `
+      <div class="center">
+        <div class="big">🏆</div>
+        <h1 style="margin-top:10px;">Quiz Complete</h1>
+        <p class="muted" style="margin:6px 0 0 0;">Score: <b>${state.score}</b> / ${maxPts} (${pct}%)</p>
+        <div class="stats" style="justify-content:center; margin-top:14px;">
+          <span class="pill">✅ Attempted: <b>${attempted}</b></span>
+          <span class="pill">🔥 Current streak: <b>${state.streak}</b></span>
+          <span class="pill">💡 Hints used: <b>${state.hintsUsed}</b></span>
+        </div>
+
+        <div class="panel" style="margin-top:16px; text-align:left;">
+          <h3>What to do next (so this actually sticks)</h3>
+          <pre>${escapeHtml(
+`1) Re-run and aim for 0 hints.
+2) Any question you miss: copy the example into your notes, then write a 1-sentence rule.
+3) If you keep missing the same concept, you don't understand it yet—go back and restate it in plain English.`)}</pre>
+        </div>
+
+        <div class="btnrow" style="justify-content:center; margin-top:16px;">
+          <button class="primary" id="btnRestartFinal">Restart</button>
+        </div>
+      </div>
+    `;
+    document.getElementById("btnRestartFinal").addEventListener("click", () => restart());
+    return;
+  }
+
+const s = sections[state.currentSection];
+const q = getCurrentQ();
+const idx0 = questionIndex(state.currentSection, state.currentQuestion);
+const donePct = Math.round(((idx0 + (state.feedback ? 1 : 0)) / tq) * 100);
+
+app.innerHTML = `
+  <div class="row">
+    <div>
+      <h1>BDM Quiz</h1>
+      <div class="muted2" style="margin-top:4px;">
+        Section ${state.currentSection + 1} / ${sections.length} • Question ${idx0 + 1} / ${tq}
+      </div>
+    </div>
+    <div class="stats">
+      <span class="pill">⭐ Score: <b>${state.score}</b></span>
+      <span class="pill">🔥 Streak: <b>${state.streak}</b></span>
+      <span class="pill">💡 Hints: <b>${state.hintsUsed}</b></span>
+      <span class="pill">🎯 Difficulty: <b>${escapeHtml(q.difficulty || "")}</b></span>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <div class="row" style="align-items:center;">
+      <div class="muted" style="font-weight:600;">${escapeHtml(s.title)}</div>
+      <div class="muted2">Points for this: <b>${q.points || 0}</b></div>
+    </div>
+    <div class="progress" style="margin-top:8px;">
+      <div class="bar" style="width:${Math.min(100, Math.max(0, donePct))}%;"></div>
+    </div>
+  </div>
+
+  ${state.phase === "study" ? `
+    <div class="grid">
+      <div class="panel" style="grid-column: 1 / -1;">
+        <div class="muted2" style="margin-bottom:8px;">Study the example. When you’re ready, move to the question — the example will be hidden.</div>
+        <div class="muted" style="font-weight:600; margin-bottom:10px;">${escapeHtml(q.example?.title || "")}</div>
+        <pre>${escapeHtml(q.example?.content || "")}</pre>
+
+        <div class="btnrow" style="margin-top:14px;">
+          <button class="primary" id="btnBegin">Go to Question</button>
+          <button class="danger" id="btnRestart">Restart</button>
+        </div>
+      </div>
+    </div>
+  ` : `
+    <div class="grid">
+      <div class="panel">
+        <div class="qtext">${escapeHtml(q.question)}</div>
+
+        <input id="answer" class="input" autocomplete="off" spellcheck="false"
+               placeholder="Type your answer…"
+               value="${escapeHtml(state.userAnswer)}" />
+
+        <div class="btnrow">
+          <button class="primary" id="btnCheck" ${state.feedback ? "disabled" : ""}>Check</button>
+          <button id="btnNext" ${state.feedback ? "" : "disabled"}>Next</button>
+          <button id="btnHint" ${state.showHint ? "disabled" : ""}>Show Hint</button>
+          <button class="danger" id="btnRestart">Restart</button>
+        </div>
+
+        ${state.showHint ? `
+          <div class="feedback">
+            <b>Hint:</b> ${escapeHtml(q.hint || "")}
+          </div>
+        ` : ""}
+
+        ${state.feedback ? `
+          <div class="feedback ${state.feedback.correct ? "ok" : "danger"}">
+            ${escapeHtml(state.feedback.message)}
+          </div>
+        ` : ""}
+
+        <div class="footer">
+          <span class="muted2">Accepts: ${escapeHtml((q.acceptableAnswers || []).slice(0, 4).join(" / "))}${(q.acceptableAnswers || []).length > 4 ? " …" : ""}</span>
+          <span class="muted2">Tip: answers are <b>case-insensitive</b> and extra spaces don’t matter.</span>
+        </div>
+      </div>
+
+
+  `}
+`;
+
+// Bind UI events for current phase
+if (state.phase === "study") {
+  document.getElementById("btnBegin").addEventListener("click", () => {
+    state.phase = "test";
+    state.showHint = false;
+    state.feedback = null;
+    state.userAnswer = "";
+    render();
+  });
+  document.getElementById("btnRestart").addEventListener("click", () => restart());
+  return;
+}
+
+const answerEl = document.getElementById("answer");
+answerEl.focus();
+answerEl.addEventListener("input", (e) => {
+  state.userAnswer = e.target.value;
+});
+
+document.getElementById("btnCheck").addEventListener("click", () => checkAnswer());
+document.getElementById("btnNext").addEventListener("click", () => nextQuestion());
+document.getElementById("btnHint").addEventListener("click", () => useHint());
+document.getElementById("btnRestart").addEventListener("click", () => restart());
+
+// Enter key behavior
+answerEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (!state.feedback) checkAnswer();
+    else nextQuestion();
+  }
+});
+}
+
+render();
+</script>
+</body>
+</html>
