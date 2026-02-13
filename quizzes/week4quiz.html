@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPARQL & RDF Triples — Ultimate Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0c0e14;--surface:#13151e;--surface2:#1a1d2b;--border:#252838;
+--accent:#6ee7b7;--accent-dim:#6ee7b720;--accent-glow:#6ee7b740;
+--red:#f87171;--red-dim:#f8717120;--yellow:#fbbf24;--yellow-dim:#fbbf2420;
+--text:#e2e8f0;--text-dim:#94a3b8;--text-muted:#64748b;
+--code-bg:#1e2030;--correct:#34d399;--wrong:#fb7185;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 20% 0%,#6ee7b708 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,#818cf808 0%,transparent 50%);pointer-events:none;z-index:0}
+.container{max-width:820px;margin:0 auto;padding:24px 20px;position:relative;z-index:1}
+code,.code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--code-bg);padding:2px 7px;border-radius:4px;color:var(--accent)}
+.header{text-align:center;padding:40px 0 32px}
+.header h1{font-size:1.9rem;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);font-size:0.95rem}
+.progress-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:24px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:0.85rem;color:var(--text-dim)}
+.progress-top .score{color:var(--accent);font-weight:600}
+.progress-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#818cf8);border-radius:3px;transition:width 0.5s ease}
+.topic-badge{display:inline-block;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:20px;background:var(--accent-dim);color:var(--accent);margin-bottom:14px}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 26px;margin-bottom:20px;transition:border-color 0.3s}
+.q-card.answered-correct{border-color:var(--correct)}
+.q-card.answered-wrong{border-color:var(--wrong)}
+.q-number{font-size:0.78rem;color:var(--text-muted);font-weight:500;margin-bottom:8px}
+.q-text{font-size:1.05rem;line-height:1.6;margin-bottom:20px;font-weight:400}
+.q-text .code-block{display:block;background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap;color:#c4b5fd;overflow-x:auto}
+.q-text .code-block .kw{color:#6ee7b7}.q-text .code-block .var{color:#93c5fd}.q-text .code-block .str{color:#fbbf24}.q-text .code-block .cm{color:#64748b}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:left;cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.95rem;color:var(--text);transition:all 0.2s;line-height:1.5;display:flex;align-items:flex-start;gap:12px}
+.opt-btn:hover:not(.disabled){border-color:var(--accent);background:var(--accent-dim)}
+.opt-btn.disabled{cursor:default;opacity:0.7}
+.opt-btn.selected-correct{border-color:var(--correct);background:#34d39915;opacity:1!important}
+.opt-btn.selected-wrong{border-color:var(--wrong);background:#fb718515;opacity:1!important}
+.opt-btn.reveal-correct{border-color:var(--correct);background:#34d39910;opacity:1!important}
+.opt-letter{min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-weight:600;font-size:0.8rem;background:var(--border);color:var(--text-dim);flex-shrink:0}
+.selected-correct .opt-letter{background:var(--correct);color:var(--bg)}
+.selected-wrong .opt-letter{background:var(--wrong);color:var(--bg)}
+.reveal-correct .opt-letter{background:var(--correct);color:var(--bg)}
+.explanation{margin-top:16px;padding:16px;border-radius:10px;font-size:0.9rem;line-height:1.65;display:none}
+.explanation.correct-exp{background:#34d39910;border:1px solid #34d39930;color:#a7f3d0}
+.explanation.wrong-exp{background:#fb718510;border:1px solid #fb718530;color:#fecdd3}
+.explanation strong{color:var(--accent)}
+.explanation .correct-answer{color:var(--correct);font-weight:600}
+.nav-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.nav-btn.primary{background:var(--accent);color:var(--bg)}
+.nav-btn.primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.nav-btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.nav-btn.secondary:hover{border-color:var(--accent)}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.hidden{display:none!important}
+/* Results */
+.results-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;text-align:center;margin-bottom:24px}
+.score-ring{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.2rem;font-weight:700;position:relative}
+.score-ring::before{content:'';position:absolute;inset:-4px;border-radius:50%;padding:4px}
+.score-ring.high::before{background:conic-gradient(var(--correct) var(--pct),var(--surface2) var(--pct))}
+.score-ring.mid::before{background:conic-gradient(var(--yellow) var(--pct),var(--surface2) var(--pct))}
+.score-ring.low::before{background:conic-gradient(var(--wrong) var(--pct),var(--surface2) var(--pct))}
+.score-ring .inner{width:128px;height:128px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;z-index:1}
+.grade-msg{font-size:1.15rem;font-weight:600;margin-bottom:4px}
+.grade-sub{color:var(--text-dim);font-size:0.9rem}
+.breakdown{margin-top:28px;text-align:left}
+.breakdown h3{font-size:0.95rem;margin-bottom:14px;color:var(--text-dim)}
+.bd-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:0.88rem;background:var(--surface2)}
+.bd-row .bd-topic{flex:1}
+.bd-row .bd-score{font-weight:600;min-width:50px;text-align:right}
+.bd-row.perfect .bd-score{color:var(--correct)}
+.bd-row.partial .bd-score{color:var(--yellow)}
+.bd-row.low .bd-score{color:var(--wrong)}
+.review-section{margin-top:24px;text-align:left}
+.review-section h3{font-size:1rem;margin-bottom:16px;color:var(--wrong)}
+.review-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px}
+.review-item .ri-q{font-size:0.9rem;margin-bottom:8px;color:var(--text)}
+.review-item .ri-your{color:var(--wrong);font-size:0.85rem}
+.review-item .ri-correct{color:var(--correct);font-size:0.85rem}
+.review-item .ri-explain{color:var(--text-dim);font-size:0.83rem;margin-top:8px;line-height:1.55}
+@media(max-width:600px){.container{padding:16px 14px}.q-card{padding:20px 16px}.header h1{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>SPARQL & RDF Triples Storage</h1>
+    <p>50 Questions — Ultimate Drill Quiz</p>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-top">
+      <span id="qCounter">Question 1 of 50</span>
+      <span class="score" id="scoreDisplay">Score: 0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div id="quizArea"></div>
+  <div id="resultsArea" class="hidden"></div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+// ===== TOPIC 1: RDF Fundamentals & Triples =====
+{
+  topic:"RDF Fundamentals",
+  type:"mc",
+  q:"An RDF triple follows the structure <code>&lt;subject&gt; &lt;predicate&gt; &lt;object&gt;</code>. Which component can be represented as a literal value?",
+  options:["Subject","Predicate","Object","Both subject and predicate"],
+  answer:2,
+  explanation:"In RDF, <strong>subjects and predicates must be IRIs</strong>, while <strong>objects can be an IRI, a literal, or a blank node</strong>. Literals (like strings or numbers) are only allowed in the object position."
+},
+{
+  topic:"RDF Fundamentals",
+  type:"tf",
+  q:"True or False: Subjects in an RDF triple can be represented by literal values such as strings.",
+  options:["True","False"],
+  answer:1,
+  explanation:"False. Subjects must be represented by <strong>IRIs (or blank nodes)</strong>. Only objects can be literals. This is a fundamental constraint of the RDF data model."
+},
+{
+  topic:"RDF Fundamentals",
+  type:"mc",
+  q:"What defines the entities (subjects, predicates, objects) used in RDF triples?",
+  options:["A SPARQL query","An ontology","A triplestore","A Fuseki server"],
+  answer:1,
+  explanation:"An <strong>ontology</strong> defines the entities used for resources in RDF triples. Ontologies are expressed using formal metalanguages such as RDFS and OWL, which define vocabularies and constraints."
+},
+{
+  topic:"RDF Fundamentals",
+  type:"mc",
+  q:"Which of the following are metalanguages used to express ontologies?",
+  options:["SQL and NoSQL","RDFS, OWL, and SKOS","HTML and CSS","JSON and XML"],
+  answer:1,
+  explanation:"<strong>RDFS, OWL, and SKOS</strong> are formal metalanguages that define vocabularies and constraints used to express ontologies. They sit above the triple/data layer in the semantic web stack."
+},
+{
+  topic:"RDF Fundamentals",
+  type:"mc",
+  q:"In the Periodic Table ontology, the element Gold has an IRI of <code>Au</code> and a symbol datatype value of <code>\"Au\"^^xsd:string</code>. What is the key difference?",
+  options:["There is no difference — they are the same","The IRI is the unique identifier; the symbol is a string data value","The symbol is the identifier; the IRI is metadata","The IRI is deprecated in favour of the string"],
+  answer:1,
+  explanation:"The <strong>IRI is the identifier</strong> (used to uniquely reference the entity in the graph), while the <strong>symbol is a string literal</strong> (a data property value). They may look the same but serve completely different purposes."
+},
+
+// ===== TOPIC 2: Creating & Storing Triples =====
+{
+  topic:"Creating & Storing Triples",
+  type:"mc",
+  q:"Automated tools that convert data into RDF follow which pattern?",
+  options:["Model-View-Controller (MVC)","Extract, Transform, Load (ETL)","Create, Read, Update, Delete (CRUD)","Map, Filter, Reduce"],
+  answer:1,
+  explanation:"RDF conversion tools follow the <strong>ETL (Extract, Transform, Load)</strong> pattern: data from different sources is extracted, transformed/mapped to the ontology, and loaded as triples into storage."
+},
+{
+  topic:"Creating & Storing Triples",
+  type:"mc",
+  q:"Which tool is specifically designed to convert Relational Database data into RDF?",
+  options:["GRDDL","Google Refine","R2RML","Dog4dag"],
+  answer:2,
+  explanation:"<strong>R2RML</strong> is a W3C standard for mapping relational databases to RDF. GRDDL handles XML, Google Refine handles CSV/XLS, and Dog4dag handles text."
+},
+{
+  topic:"Creating & Storing Triples",
+  type:"mc",
+  q:"RDF triples can be stored using four categories of technology. Which is NOT one of them?",
+  options:["RDBMS","Native triplestore","Blockchain","NoSQL"],
+  answer:2,
+  explanation:"The four RDF storage categories from the lecture are: <strong>RDBMS, Native triplestore, NoSQL, and Custom</strong>. Blockchain is not listed as an RDF storage technology."
+},
+{
+  topic:"Creating & Storing Triples",
+  type:"tf",
+  q:"True or False: Blazegraph, GraphDB, Neptune, and Jena are all examples of native triplestores.",
+  options:["True","False"],
+  answer:0,
+  explanation:"True. The lecture diagram shows <strong>Blazegraph, GraphDB, Neptune, Jena, and Virtuoso</strong> as native triplestore examples. Stardog and rdf4j are listed as custom solutions."
+},
+
+// ===== TOPIC 3: Triplestores =====
+{
+  topic:"Triplestores",
+  type:"mc",
+  q:"Which feature does a triplestore (RDF store) NOT natively support?",
+  options:["Managing multiple datasets","SPARQL queries","Inferencing via reasoners","SQL JOIN operations"],
+  answer:3,
+  explanation:"Triplestores support managing datasets, SPARQL queries, inferencing, and cross-graph querying. <strong>SQL JOIN operations are relational database features</strong>, not native triplestore capabilities."
+},
+{
+  topic:"Triplestores",
+  type:"tf",
+  q:"True or False: A triplestore can query across multiple graphs within its datasets.",
+  options:["True","False"],
+  answer:0,
+  explanation:"True. The lecture explicitly states triplestores <strong>can query across multiple graphs</strong>. Each dataset contains one or more graphs, and cross-graph querying is a key feature."
+},
+
+// ===== TOPIC 4: Jena & Fuseki =====
+{
+  topic:"Jena & Fuseki",
+  type:"mc",
+  q:"The Jena framework provides several APIs. Which combination correctly lists them?",
+  options:["RDF API, SQL API, Graph API","RDF API, Ontology API, SPARQL API, Inference API","REST API, CRUD API, Query API","File API, Network API, Storage API"],
+  answer:1,
+  explanation:"Jena provides <strong>RDF API, Ontology API, SPARQL API, and Inference API</strong> (with built-in and external reasoners). It also includes parsers/writers for formats like RDF/XML, Turtle, N-triples, and RDFa."
+},
+{
+  topic:"Jena & Fuseki",
+  type:"mc",
+  q:"Fuseki is a SPARQL server based on Jena. What is the embedded web server it uses?",
+  options:["Apache Tomcat","Nginx","Jetty","IIS"],
+  answer:2,
+  explanation:"Fuseki is based on <strong>Jetty</strong>, which is an embedded web server and Java servlet container. Fuseki comes with TDB2 as its triplestore."
+},
+{
+  topic:"Jena & Fuseki",
+  type:"mc",
+  q:"What is the default URL to interact with Fuseki through a web browser?",
+  options:["http://localhost:8080","http://localhost:3030","http://localhost:5000","http://localhost:4040"],
+  answer:1,
+  explanation:"Fuseki runs on <strong>http://localhost:3030</strong> by default. You can manage datasets, upload data, run SPARQL queries, and edit graphs through this web interface."
+},
+{
+  topic:"Jena & Fuseki",
+  type:"mc",
+  q:"When the Periodic Table ontology (PeriodicTable.owl) was uploaded to Fuseki, how many triples were loaded?",
+  options:["118","1000","1847","2500"],
+  answer:2,
+  explanation:"The lecture shows the upload result: <strong>1847 triples</strong> from the 90.5kb PeriodicTable.owl file. This covers all 118 elements plus ontology definitions."
+},
+{
+  topic:"Jena & Fuseki",
+  type:"mc",
+  q:"In Fuseki, which three modes can it run as?",
+  options:["Client, server, peer-to-peer","System service, standalone server, web application","Development, staging, production","Local, distributed, cloud"],
+  answer:1,
+  explanation:"Fuseki can run as a <strong>system service, a standalone server, or a web application</strong>. It can also be installed as a system service on the operating system."
+},
+{
+  topic:"Jena & Fuseki",
+  type:"mc",
+  q:"What triplestore comes bundled with Fuseki?",
+  options:["Neptune","GraphDB","TDB2","Blazegraph"],
+  answer:2,
+  explanation:"Fuseki comes with <strong>TDB2</strong>, which is a native triplestore. This is the default persistent storage backend for Fuseki."
+},
+
+// ===== TOPIC 5: SPARQL Fundamentals =====
+{
+  topic:"SPARQL Fundamentals",
+  type:"mc",
+  q:"SPARQL is best described as:",
+  options:["A programming language for web applications","The query language for RDF/graph data (like SQL for tables)","A database management system","A serialization format for triples"],
+  answer:1,
+  explanation:"<strong>SPARQL is the query language for RDF data</strong> — it's analogous to SQL but works with triples and graph relationships instead of tables and rows."
+},
+{
+  topic:"SPARQL Fundamentals",
+  type:"mc",
+  q:"The SPARQL standard comprises four key parts. Which is NOT one of them?",
+  options:["Query Language","Protocol","Schema Definition Language","Update Language"],
+  answer:2,
+  explanation:"The four parts are: <strong>Query Language</strong> (retrieve data), <strong>Protocol</strong> (send/receive queries), <strong>Query Results</strong> (XML, JSON, CSV format), and <strong>Update Language</strong> (add/modify/delete). Schema Definition Language is not a SPARQL component."
+},
+{
+  topic:"SPARQL Fundamentals",
+  type:"mc",
+  q:"What is a SPARQL endpoint?",
+  options:["A file that stores SPARQL queries","A web service that accepts remote SPARQL queries","A type of RDF serialization","A debugging tool for triples"],
+  answer:1,
+  explanation:"A SPARQL endpoint is a <strong>web service implementing the SPARQL protocol</strong> — essentially a server with a triplestore that accepts remote SPARQL queries over HTTP."
+},
+{
+  topic:"SPARQL Fundamentals",
+  type:"mc",
+  q:"SPARQL is fundamentally based on which principle?",
+  options:["Table joins","Pattern matching","Regular expressions","Recursive descent"],
+  answer:1,
+  explanation:"SPARQL is based on <strong>pattern matching</strong>. You describe the pattern you want, the SPARQL engine searches the graph, and the results are the parts of the graph that match."
+},
+
+// ===== TOPIC 6: SPARQL Query Types =====
+{
+  topic:"SPARQL Query Types",
+  type:"mc",
+  q:"Which SPARQL query type returns a Boolean (true/false) result?",
+  options:["SELECT","CONSTRUCT","DESCRIBE","ASK"],
+  answer:3,
+  explanation:"<strong>ASK</strong> returns true if the pattern matches the data, and false otherwise. SELECT returns variables, CONSTRUCT returns a new RDF graph, and DESCRIBE returns all properties of a resource."
+},
+{
+  topic:"SPARQL Query Types",
+  type:"mc",
+  q:"Which SPARQL query type builds new triples from matched patterns?",
+  options:["SELECT","CONSTRUCT","DESCRIBE","ASK"],
+  answer:1,
+  explanation:"<strong>CONSTRUCT</strong> creates new triples using a template defined with variables bound by the WHERE clause. The output is an RDF graph, not a table of values."
+},
+{
+  topic:"SPARQL Query Types",
+  type:"mc",
+  q:"You want to retrieve ALL properties of a specific entity. Which query type should you use?",
+  options:["SELECT *","CONSTRUCT","DESCRIBE","ASK"],
+  answer:2,
+  explanation:"<strong>DESCRIBE</strong> retrieves all information (properties) about a resource given its IRI. It returns RDF triples. While SELECT * returns all variables in the WHERE clause, DESCRIBE specifically gets everything about an entity."
+},
+{
+  topic:"SPARQL Query Types",
+  type:"spot",
+  q:"Spot the error in this SPARQL query:\n<span class='code-block'><span class='kw'>SELECT</span> <span class='var'>?name</span> <span class='var'>?age</span>\n<span class='kw'>WHERE</span> {\n  <span class='var'>?person</span> foaf:name <span class='var'>?name</span>\n  <span class='var'>?person</span> foaf:age <span class='var'>?age</span> .\n}</span>",
+  options:["Missing PREFIX declaration for foaf:","Missing period (.) after the first triple pattern","Both A and B","No error — this query is correct"],
+  answer:2,
+  explanation:"<strong>Both errors exist.</strong> First, there is no PREFIX declaration for <code>foaf:</code>. Second, each triple pattern must end with a period (.) or semicolon (;) — the first pattern <code>?person foaf:name ?name</code> is missing its terminator."
+},
+
+// ===== TOPIC 7: SPARQL Query Structure =====
+{
+  topic:"SPARQL Query Structure",
+  type:"mc",
+  q:"What is the correct order of clauses in a SPARQL query?",
+  options:["WHERE → PREFIX → SELECT → FROM","PREFIX → QUERY_TYPE → FROM → WHERE","FROM → WHERE → SELECT → PREFIX","SELECT → PREFIX → WHERE → FROM"],
+  answer:1,
+  explanation:"The correct structure is: <strong>PREFIX</strong> (namespaces) → <strong>QUERY_TYPE</strong> (SELECT/CONSTRUCT etc. + variables) → <strong>FROM</strong> (which graphs) → <strong>WHERE</strong> (patterns to match)."
+},
+{
+  topic:"SPARQL Query Structure",
+  type:"mc",
+  q:"In SPARQL, variables are denoted by which prefix character(s)?",
+  options:["# or @","? or $","& or %","_ or ~"],
+  answer:1,
+  explanation:"SPARQL variables start with <strong>? or $</strong>. For example, <code>?name</code> and <code>$name</code> are both valid variable names and are interchangeable."
+},
+
+// ===== TOPIC 8: Basic Graph Patterns =====
+{
+  topic:"Graph Patterns",
+  type:"mc",
+  q:"In SPARQL, which of these is NOT a valid way to express a subject, predicate, or object?",
+  options:["Variable: ?element","Full IRI: &lt;http://...#Au&gt;","QName: prt:Au","Array index: elements[0]"],
+  answer:3,
+  explanation:"Valid forms are: <strong>variables</strong> (?x or $x), <strong>full IRIs</strong> in angle brackets, <strong>QNames</strong> (prefix:localname), and <strong>literals</strong>. Array indexing is not part of SPARQL syntax."
+},
+{
+  topic:"Graph Patterns",
+  type:"spot",
+  q:"The following four queries all select the name of element Au. Which uses the most compact PREFIX form?\n\nA: No prefix, full IRIs\nB: <code>PREFIX : &lt;...#&gt;</code> then <code>:Au :name $name</code>\nC: <code>PREFIX prt: &lt;...#&gt;</code> then <code>prt:Au prt:name $name</code>\nD: Same as B but with a period",
+  options:["A","B","C","B and D are equally compact and identical"],
+  answer:3,
+  explanation:"Queries B and D both use <strong>the empty prefix (: )</strong> which gives the most compact notation. The lecture notes that B and D look identical — the only difference is the trailing period, which is optional for the last pattern."
+},
+{
+  topic:"Graph Patterns",
+  type:"mc",
+  q:"What does the semicolon (;) do in a SPARQL WHERE clause?",
+  options:["Ends the entire query","Separates two completely independent triple patterns","Allows reusing the same subject for the next predicate-object pair","Marks a comment"],
+  answer:2,
+  explanation:"The semicolon (;) is syntactic sugar that lets you <strong>reuse the same subject</strong> for multiple predicate-object pairs. So <code>?e prt:name \"gold\"; prt:classification ?c.</code> means both triples share <code>?e</code> as the subject."
+},
+{
+  topic:"Graph Patterns",
+  type:"mc",
+  q:"What does <code>SELECT *</code> do in SPARQL?",
+  options:["Selects all triples in the entire graph","Selects all variables mentioned in the WHERE clause","Deletes all data","Selects only the first result"],
+  answer:1,
+  explanation:"<strong>SELECT *</strong> returns all variables that appear in the WHERE clause. It does NOT return all triples — to get all triples you'd use <code>SELECT ?s ?p ?o WHERE { ?s ?p ?o }</code>."
+},
+
+// ===== TOPIC 9: OPTIONAL =====
+{
+  topic:"OPTIONAL Clause",
+  type:"mc",
+  q:"In the Periodic Table dataset, a query requiring <code>prt:color</code> without OPTIONAL skips elements 113, 115, and 117. Why?",
+  options:["Those elements don't exist in the dataset","Those elements have no color property defined","The query has a syntax error","SPARQL limits results to 115 by default"],
+  answer:1,
+  explanation:"Elements 113, 115, and 117 <strong>have no color property</strong> in the dataset. Without OPTIONAL, the pattern requires all triples to match — elements missing color are excluded entirely."
+},
+{
+  topic:"OPTIONAL Clause",
+  type:"mc",
+  q:"What is the effect of adding <code>OPTIONAL { ?e prt:color ?color . }</code> to a query?",
+  options:["Only elements WITH a color are returned","All elements are returned; color is included if available, blank if not","The query will fail","Colors are randomly assigned to missing elements"],
+  answer:1,
+  explanation:"OPTIONAL makes the color pattern <strong>non-mandatory</strong>. All 118 elements are returned — those with a color property will have it filled in, others will have an empty/unbound value for ?color."
+},
+{
+  topic:"OPTIONAL Clause",
+  type:"tf",
+  q:"True or False: OPTIONAL in SPARQL is similar to a LEFT JOIN in SQL.",
+  options:["True","False"],
+  answer:0,
+  explanation:"True. <strong>OPTIONAL acts like a LEFT JOIN</strong> — the main pattern results are always returned, and the optional pattern is included when it matches, with unbound variables when it doesn't."
+},
+
+// ===== TOPIC 10: FILTER =====
+{
+  topic:"FILTER",
+  type:"mc",
+  q:"Which SPARQL clause restricts results by applying Boolean conditions?",
+  options:["OPTIONAL","UNION","FILTER","LIMIT"],
+  answer:2,
+  explanation:"<strong>FILTER</strong> restricts results by applying Boolean expressions. It supports operators like >, <, >=, <=, &&, || and can apply to numbers, dates, and strings (via regex)."
+},
+{
+  topic:"FILTER",
+  type:"spot",
+  q:"What does this query filter for?\n<span class='code-block'><span class='kw'>FILTER REGEX</span>(<span class='var'>?symbol</span>, <span class='str'>'^n'</span>, <span class='str'>'i'</span>)</span>",
+  options:["Elements whose symbol contains 'n' anywhere","Elements whose symbol starts with 'n' (case-sensitive)","Elements whose symbol starts with 'n' or 'N' (case-insensitive)","Elements whose symbol ends with 'n'"],
+  answer:2,
+  explanation:"<code>^n</code> means 'starts with n', and the <code>'i'</code> flag makes it <strong>case-insensitive</strong>. So it matches symbols starting with n or N. SPARQL uses XPath regular expression syntax."
+},
+{
+  topic:"FILTER",
+  type:"mc",
+  q:"To find elements born between 1962 and 2020, the lecture uses: <code>FILTER(?date < \"2020\" && ?date > \"1962\")</code>. What operators does FILTER support for dates?",
+  options:["Only = and !=","The same comparison operators as numbers: >, <, >=, <=, &&, ||","Only REGEX","Only BETWEEN"],
+  answer:1,
+  explanation:"FILTER uses <strong>the same comparison operators for dates as it does for numbers</strong>: >, <, >=, <=, &&, ||. There is no BETWEEN keyword in SPARQL."
+},
+{
+  topic:"FILTER",
+  type:"mc",
+  q:"What does <code>FILTER NOT EXISTS { ?element prt:color ?color . }</code> do?",
+  options:["Returns elements that have a color","Returns elements that do NOT have a color property","Deletes color properties","Checks if colors exist in the schema"],
+  answer:1,
+  explanation:"<strong>FILTER NOT EXISTS</strong> tests whether a pattern does NOT match. Here it returns elements that have no color property defined — the opposite of requiring a match."
+},
+{
+  topic:"FILTER",
+  type:"mc",
+  q:"Besides FILTER NOT EXISTS, what other construct can remove matching patterns from results?",
+  options:["OPTIONAL","UNION","MINUS","LIMIT"],
+  answer:2,
+  explanation:"<strong>MINUS</strong> is another construct that removes matches. Both FILTER NOT EXISTS and MINUS can exclude patterns, though they have subtle semantic differences in edge cases."
+},
+
+// ===== TOPIC 11: UNION =====
+{
+  topic:"UNION",
+  type:"mc",
+  q:"What does the UNION operator do in SPARQL?",
+  options:["Joins two triplestores together permanently","Combines results from two or more graph patterns into one result set","Removes duplicate results","Merges two graphs into one"],
+  answer:1,
+  explanation:"UNION <strong>combines results matching the first pattern with results matching the second pattern</strong>. It's like an OR — any result matching either pattern is included."
+},
+{
+  topic:"UNION",
+  type:"tf",
+  q:"True or False: You can chain any number of UNION clauses in a single SPARQL query.",
+  options:["True","False"],
+  answer:0,
+  explanation:"True. The lecture states <strong>any number of unions can be used</strong>. You can chain multiple UNION blocks to combine results from many different patterns."
+},
+
+// ===== TOPIC 12: Query Modifiers =====
+{
+  topic:"Query Modifiers",
+  type:"mc",
+  q:"Which SPARQL query modifiers are available?",
+  options:["Only ORDER BY and LIMIT","ORDER BY, LIMIT, OFFSET, GROUP BY, HAVING","Only GROUP BY and HAVING","ORDER BY, LIMIT, OFFSET only"],
+  answer:1,
+  explanation:"SPARQL offers five query modifiers: <strong>ORDER BY, LIMIT, OFFSET, GROUP BY, and HAVING</strong>."
+},
+{
+  topic:"Query Modifiers",
+  type:"mc",
+  q:"What is the default sort order when using <code>ORDER BY ?variable</code>?",
+  options:["Descending","Random","Ascending","Alphabetical only"],
+  answer:2,
+  explanation:"<strong>Ascending order is the default</strong> for ORDER BY. To sort in descending order, you must explicitly use <code>ORDER BY DESC(?variable)</code>."
+},
+{
+  topic:"Query Modifiers",
+  type:"mc",
+  q:"If you use <code>LIMIT 5</code> and <code>OFFSET 10</code>, what results do you see?",
+  options:["The first 5 results","Results 6 through 10","Results 11 through 15 (skip 10, then show 5)","Results 10 through 15"],
+  answer:2,
+  explanation:"OFFSET 10 means <strong>skip the first 10 results</strong>, then LIMIT 5 means show the next 5. So you see results 11 through 15. The lecture states: 'Offset 10 = skip 10; show 11th'."
+},
+{
+  topic:"Query Modifiers",
+  type:"mc",
+  q:"Which aggregate function collapses multiple values into a comma-separated string?",
+  options:["COUNT()","SUM()","GROUP_CONCAT()","SAMPLE()"],
+  answer:2,
+  explanation:"<strong>GROUP_CONCAT()</strong> merges all values for a variable into one comma-separated string. COUNT counts, SUM adds, and SAMPLE returns one random item."
+},
+{
+  topic:"Query Modifiers",
+  type:"mc",
+  q:"What does HAVING do in a SPARQL query?",
+  options:["Filters individual results before grouping","Applies a condition after groups have been created by GROUP BY","Limits the total number of results","Sorts the results"],
+  answer:1,
+  explanation:"<strong>HAVING applies conditions after GROUP BY</strong> has created groups. Only groups satisfying the condition are returned. It's like WHERE but for aggregated groups."
+},
+{
+  topic:"Query Modifiers",
+  type:"spot",
+  q:"What does this query return?\n<span class='code-block'><span class='kw'>SELECT</span> <span class='var'>?state</span> (<span class='kw'>COUNT</span>(<span class='var'>?symbol</span>) <span class='kw'>as</span> <span class='var'>?num</span>)\n<span class='kw'>WHERE</span> { ... }\n<span class='kw'>GROUP BY</span> <span class='var'>?state</span>\n<span class='kw'>HAVING</span> (<span class='var'>?num</span> > 10)\n<span class='kw'>ORDER BY</span> <span class='var'>?num</span></span>",
+  options:["All states regardless of element count","Only states with more than 10 elements, sorted by count ascending","Only states with exactly 10 elements","The first 10 states"],
+  answer:1,
+  explanation:"GROUP BY groups elements by state, COUNT counts each group, HAVING filters to keep only groups with <strong>more than 10 elements</strong>, and ORDER BY sorts by count in ascending order (default)."
+},
+
+// ===== TOPIC 13: CONSTRUCT, DESCRIBE, ASK =====
+{
+  topic:"CONSTRUCT, DESCRIBE & ASK",
+  type:"mc",
+  q:"What is the output format of a CONSTRUCT query?",
+  options:["A table of variable bindings","An RDF graph (new triples)","A Boolean value","A count of matches"],
+  answer:1,
+  explanation:"CONSTRUCT outputs <strong>an RDF graph</strong> — it creates new triples from matched patterns using a template. These triples can be inserted into another graph using INSERT."
+},
+{
+  topic:"CONSTRUCT, DESCRIBE & ASK",
+  type:"mc",
+  q:"In the lecture's CONSTRUCT example, what new properties were generated for each element?",
+  options:["foaf:name and foaf:age","rdfs:label (from name) and rdfs:comment (from color)","owl:sameAs and rdfs:seeAlso","prt:newName and prt:newColor"],
+  answer:1,
+  explanation:"The CONSTRUCT template created <strong>rdfs:label from the element's name</strong> and <strong>rdfs:comment from the element's color</strong>. Elements without color only got rdfs:label."
+},
+{
+  topic:"CONSTRUCT, DESCRIBE & ASK",
+  type:"mc",
+  q:"What is the difference between <code>DESCRIBE prt:Au</code> and <code>DESCRIBE ?e WHERE { ?e a prt:Element }</code>?",
+  options:["The first describes one specific element; the second describes all elements matching the pattern","They are identical","The first returns triples; the second returns variables","The second is invalid SPARQL"],
+  answer:0,
+  explanation:"<code>DESCRIBE prt:Au</code> returns all properties of <strong>one specific entity</strong>. <code>DESCRIBE ?e WHERE { ?e a prt:Element }</code> uses a WHERE clause to find matching entities and then <strong>describes all of them</strong>."
+},
+{
+  topic:"CONSTRUCT, DESCRIBE & ASK",
+  type:"mc",
+  q:"An ASK query with <code>FILTER REGEX(?s, 'A', 'i')</code> on element symbols returns True. What does this confirm?",
+  options:["All elements have 'A' in their symbol","At least one element has a symbol containing 'a' or 'A'","Exactly one element matches","The query failed"],
+  answer:1,
+  explanation:"ASK returns true if <strong>at least one match exists</strong>. The regex 'A' with 'i' flag matches any symbol containing a or A. True confirms at least one such element exists."
+},
+
+// ===== TOPIC 14: SPARQL 1.1 Features =====
+{
+  topic:"SPARQL 1.1 Features",
+  type:"mc",
+  q:"SPARQL 1.1 (2013) introduced several new features. Which set is correct?",
+  options:["Negation, Transitive Queries, Aggregation/Grouping, Subqueries","Negation, Machine Learning, Blockchain support, Cloud queries","Only Aggregation and Grouping","Full-text search and Geospatial queries only"],
+  answer:0,
+  explanation:"SPARQL 1.1 introduced <strong>Negation, Transitive Queries (property paths), Aggregation and Grouping, and Subqueries</strong>."
+},
+{
+  topic:"SPARQL 1.1 Features",
+  type:"mc",
+  q:"In SPARQL 1.1, <code>foaf:knows+</code> is an example of a transitive/property path query. What does the <code>+</code> mean?",
+  options:["Exactly one hop","Zero or more hops","One or more hops","Optional property"],
+  answer:2,
+  explanation:"The <code>+</code> operator means <strong>one or more</strong> hops along that property. So <code>:Alice foaf:knows+ ?connection</code> finds everyone Alice knows directly or transitively (knows someone who knows someone...)."
+},
+{
+  topic:"SPARQL 1.1 Features",
+  type:"mc",
+  q:"Given: Alice knows Bob, Bob knows Charlie, Charlie knows Dana. What does <code>:Alice foaf:knows+ ?connection</code> return?",
+  options:["Only Bob","Bob and Charlie","Bob, Charlie, and Dana","Only Dana"],
+  answer:2,
+  explanation:"The <code>+</code> operator follows the chain transitively: Alice→Bob (1 hop), Alice→Bob→Charlie (2 hops), Alice→Bob→Charlie→Dana (3 hops). So it returns <strong>Bob, Charlie, and Dana</strong>."
+},
+
+// ===== TOPIC 15: SERVICE (Federated Queries) =====
+{
+  topic:"SERVICE & Federation",
+  type:"mc",
+  q:"What does the SERVICE keyword in SPARQL do?",
+  options:["Creates a new triplestore","Sends a query to a remote SPARQL endpoint","Starts the Fuseki server","Imports data from a CSV file"],
+  answer:1,
+  explanation:"SERVICE allows <strong>sending queries to a remote SPARQL endpoint</strong>. This enables federated queries that combine data from different endpoints (e.g., local data + DBpedia)."
+},
+{
+  topic:"SERVICE & Federation",
+  type:"mc",
+  q:"In the lecture's SERVICE example, which remote endpoint is queried?",
+  options:["http://localhost:3030","http://wikidata.org/sparql","http://dbpedia.org/sparql","http://google.com/sparql"],
+  answer:2,
+  explanation:"The example queries <strong>http://dbpedia.org/sparql</strong> for people whose names start with 'Hadj', retrieving names and birth dates from the DBpedia knowledge base."
+},
+{
+  topic:"SERVICE & Federation",
+  type:"tf",
+  q:"True or False: A single SPARQL query can use multiple SERVICE clauses to query different endpoints.",
+  options:["True","False"],
+  answer:0,
+  explanation:"True. The lecture states <strong>multiple SERVICE clauses can be used</strong>, allowing federation of local and multiple remote data sources in a single query."
+},
+
+// ===== TOPIC 16: Reasoning =====
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"Forward chaining reasoning is best described as:",
+  options:["Starting from a goal and working backwards to find supporting facts","Starting from known facts and applying rules repeatedly until no new knowledge can be derived","Randomly selecting rules to apply","Querying external endpoints for missing data"],
+  answer:1,
+  explanation:"Forward chaining is a <strong>data-driven approach</strong>: start from known facts, apply rules repeatedly (matching facts to rule conditions), and add all derived triples until no rule can produce new knowledge."
+},
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"Backward chaining reasoning is best described as:",
+  options:["Starting from facts and deriving all possible conclusions","Starting from a conclusion to be proven and working back to find supporting facts","Running all rules in reverse order","Deleting facts that don't match rules"],
+  answer:1,
+  explanation:"Backward chaining is a <strong>goal-driven approach</strong>: start from the conclusion to be proven, apply rules that could produce that conclusion, create sub-goals, and repeat until a known fact is found."
+},
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"Given Rule 1: 'If raining → ground is wet' and Rule 2: 'If ground is wet → grass is wet', with fact 'It is raining', what does forward chaining derive?",
+  options:["Only: ground is wet","Ground is wet AND grass is wet","Only: grass is wet","Nothing — rules cannot chain"],
+  answer:1,
+  explanation:"Forward chaining: (1) Fact: raining → Apply Rule 1 → derive 'ground is wet'. (2) New fact: ground is wet → Apply Rule 2 → derive '<strong>grass is wet</strong>'. Both conclusions are added."
+},
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"In backward chaining, to prove 'the grass is wet', what is the first sub-goal created?",
+  options:["Prove: it is raining","Prove: the ground is wet","Prove: the sky is cloudy","No sub-goal needed"],
+  answer:1,
+  explanation:"Starting from 'grass is wet', Rule 2 says this follows if 'ground is wet'. So the first sub-goal is <strong>'prove the ground is wet'</strong>. Then Rule 1 creates sub-goal 'prove it is raining', which matches a known fact."
+},
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"What is a key trade-off between forward and backward chaining?",
+  options:["Forward is always faster","Backward cannot handle rules","Forward reasons once (may be slow with many facts); backward reasons per query (no upfront cost)","They are identical in performance"],
+  answer:2,
+  explanation:"<strong>Forward chaining</strong>: reasoning done once upfront but may be slow with many facts. <strong>Backward chaining</strong>: reasoning done per query with no upfront inferencing cost when first loading data."
+},
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"Which triplestore is noted for having a native reasoner?",
+  options:["Fuseki","GraphDB","Blazegraph","rdf4j"],
+  answer:1,
+  explanation:"<strong>GraphDB</strong> has native reasoners. Others use reasoners from external frameworks like RDF4J or Jena."
+},
+{
+  topic:"Reasoning",
+  type:"mc",
+  q:"Which types of reasoning rules do triplestores commonly support?",
+  options:["Only custom rules","Only OWL rules","RDFS subClassOf/subPropertyOf, OWL sameAs, OWL rules, and custom rules","Only forward chaining rules"],
+  answer:2,
+  explanation:"The lecture lists: <strong>RDFS subClassOf/subPropertyOf, RDFS, OWL sameAs, OWL rules, and custom rules</strong>. Examples include inferring HealthyFood from Fruit/Vegetable, or discount pricing rules."
+},
+
+// ===== TOPIC 17: Fuseki SPARQL Endpoint =====
+{
+  topic:"Fuseki Endpoints",
+  type:"mc",
+  q:"When Fuseki exposes a dataset, what query-related services does it provide?",
+  options:["Only SPARQL Query","SPARQL Query, SPARQL Update, File Upload, and Graph Store Protocol","Only REST API","Only File Upload"],
+  answer:1,
+  explanation:"Fuseki exposes <strong>SPARQL Query, SPARQL Update, File Upload, and Graph Store Protocol</strong> (both read and read-write) as available services for each dataset."
+},
+{
+  topic:"Fuseki Endpoints",
+  type:"mc",
+  q:"What is the typical first query to run when exploring a new SPARQL endpoint?",
+  options:["ASK { ?s ?p ?o }","SELECT ?s ?p ?o WHERE { ?s ?p ?o }","DESCRIBE *","CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }"],
+  answer:1,
+  explanation:"<strong>SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }</strong> is the 'select all triples' query — a very general pattern that matches everything. The lecture calls it the 'typical first query when querying a new endpoint'."
+},
+{
+  topic:"Fuseki Endpoints",
+  type:"mc",
+  q:"Fuseki's SPARQL query results can be returned in which formats?",
+  options:["Only XML","Only JSON","JSON, XML, CSV, Turtle, and other formats","Only plain text"],
+  answer:2,
+  explanation:"The Fuseki interface allows viewing results in different formats. The SPARQL standard itself supports <strong>XML, JSON, CSV</strong> as result formats, and Fuseki also supports Turtle for graph results."
+},
+];
+
+// Shuffle
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+const questions=shuffle([...ALL_QUESTIONS]);
+let current=0,score=0,answered=0,wrong=[];
+
+function renderQuestion(){
+  const q=questions[current];
+  const letters=['A','B','C','D'];
+  document.getElementById('qCounter').textContent=`Question ${current+1} of ${questions.length}`;
+  document.getElementById('progressFill').style.width=((current)/questions.length*100)+'%';
+  document.getElementById('scoreDisplay').textContent=`Score: ${score} / ${answered}`;
+  let typeLabel=q.type==='tf'?'True / False':q.type==='spot'?'Spot the Error':'Multiple Choice';
+  let html=`<div class="q-card" id="qCard">
+    <span class="topic-badge">${q.topic}</span>
+    <div class="q-number">${typeLabel} — Question ${current+1}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">`;
+  q.options.forEach((opt,i)=>{
+    html+=`<button class="opt-btn" onclick="checkAnswer(${i})" id="opt${i}">
+      <span class="opt-letter">${letters[i]||i+1}</span><span>${opt}</span></button>`;
+  });
+  html+=`</div><div class="explanation" id="explanation"></div></div>
+    <div class="nav-row"><div></div><button class="nav-btn primary hidden" id="nextBtn" onclick="nextQuestion()">Next →</button></div>`;
+  document.getElementById('quizArea').innerHTML=html;
+}
+
+function checkAnswer(idx){
+  const q=questions[current];
+  const btns=document.querySelectorAll('.opt-btn');
+  if(btns[0].classList.contains('disabled'))return;
+  btns.forEach(b=>b.classList.add('disabled'));
+  answered++;
+  const isCorrect=idx===q.answer;
+  if(isCorrect){score++;btns[idx].classList.add('selected-correct');document.getElementById('qCard').classList.add('answered-correct');}
+  else{btns[idx].classList.add('selected-wrong');btns[q.answer].classList.add('reveal-correct');document.getElementById('qCard').classList.add('answered-wrong');wrong.push({q:q.q.replace(/<[^>]*>/g,''),your:q.options[idx],correct:q.options[q.answer],explain:q.explanation,topic:q.topic});}
+  const exp=document.getElementById('explanation');
+  exp.className=`explanation ${isCorrect?'correct-exp':'wrong-exp'}`;
+  exp.innerHTML=(isCorrect?'✓ Correct! ':'✗ Incorrect. ')+q.explanation;
+  exp.style.display='block';
+  document.getElementById('scoreDisplay').textContent=`Score: ${score} / ${answered}`;
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length){showResults();return;}
+  renderQuestion();
+}
+
+function showResults(){
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('progressWrap').classList.add('hidden');
+  const pct=Math.round(score/questions.length*100);
+  let grade,cls;
+  if(pct>=85){grade='Outstanding!';cls='high';}else if(pct>=60){grade='Solid Performance';cls='mid';}else{grade='Needs More Review';cls='low';}
+  // topic breakdown
+  const topics={};
+  questions.forEach(q=>{if(!topics[q.topic])topics[q.topic]={total:0,correct:0};topics[q.topic].total++;});
+  questions.forEach((q,i)=>{/* count correct: not in wrong list */});
+  // recalc
+  const wrongTopics=new Set(wrong.map(w=>w.topic));
+  const wrongByTopic={};wrong.forEach(w=>{wrongByTopic[w.topic]=(wrongByTopic[w.topic]||0)+1;});
+  Object.keys(topics).forEach(t=>{topics[t].correct=topics[t].total-(wrongByTopic[t]||0);});
+
+  let bdHtml='';
+  Object.keys(topics).sort().forEach(t=>{
+    const tp=topics[t];const tpct=Math.round(tp.correct/tp.total*100);
+    let rowCls=tpct===100?'perfect':tpct>=50?'partial':'low';
+    bdHtml+=`<div class="bd-row ${rowCls}"><span class="bd-topic">${t}</span><span class="bd-score">${tp.correct}/${tp.total} (${tpct}%)</span></div>`;
+  });
+
+  let reviewHtml='';
+  if(wrong.length>0){
+    reviewHtml='<div class="review-section"><h3>Review Incorrect Answers ('+wrong.length+')</h3>';
+    wrong.forEach(w=>{
+      reviewHtml+=`<div class="review-item"><div class="ri-q">${w.q}</div><div class="ri-your">Your answer: ${w.your}</div><div class="ri-correct">Correct: ${w.correct}</div><div class="ri-explain">${w.explain}</div></div>`;
+    });
+    reviewHtml+='</div>';
+  }
+
+  document.getElementById('resultsArea').classList.remove('hidden');
+  document.getElementById('resultsArea').innerHTML=`
+    <div class="results-card">
+      <div class="score-ring ${cls}" style="--pct:${pct}%"><div class="inner">${pct}%</div></div>
+      <div class="grade-msg">${grade}</div>
+      <div class="grade-sub">${score} correct out of ${questions.length} questions</div>
+      <div class="breakdown"><h3>Performance by Topic</h3>${bdHtml}</div>
+    </div>
+    ${reviewHtml}
+    <div style="text-align:center;margin:24px 0"><button class="nav-btn primary" onclick="restart()">Restart Quiz</button></div>`;
+}
+
+function restart(){
+  current=0;score=0;answered=0;wrong=[];
+  shuffle(questions);
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('progressWrap').classList.remove('hidden');
+  document.getElementById('resultsArea').classList.add('hidden');
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
